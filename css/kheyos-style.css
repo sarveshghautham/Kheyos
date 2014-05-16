@@ -1,0 +1,516 @@
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: #F9F9F9;
+}
+
+.primary_page_body {
+    padding-top: 0px;
+    background: #F2F2F2;
+}
+
+@media (min-width: 768px) {
+    #navbar-text-settings {
+        display: none;
+    }
+
+    #navbar-text-update-cover {
+        display: none;
+    }
+
+    #navbar-text-update-status {
+        display: none;
+    }
+}
+
+.popover.bottom > .arrow {
+    left: 88%;
+}
+
+.followed_by_dropdown_menu {
+    left: auto;
+    right: 0
+}
+
+.post_display_block {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .post_owner_block {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .followed_by_dropdown_menu {
+        left: -45px;
+        right: auto;
+    }
+}
+
+.popover.bottom > .arrow {
+    display: none;
+}
+
+.popover.bottom {
+    margin-top: 0px;
+}
+
+#navbar_settings_modal .modal-dialog {
+    width: 250px;
+}
+
+#navbar_settings_modal .modal-dialog a {
+    color: #2E2E2E;
+}
+
+#navbar_avatars_modal .modal-dialog {
+    width: 300px;
+}
+
+#navbar_avatars_modal .modal-dialog a {
+    color: #2E2E2E;
+}
+
+footer {
+    padding: 30px 0;
+}
+
+hr {
+    border-color: #DEDEDE;
+}
+
+#header_img {
+    background: url(../ico/kheyos-icon-40.png) center no-repeat;
+    width: 100%;
+    height: 40px;
+}
+
+#header_img_30 {
+    background: url(../ico/kheyos-icon-30.png) center no-repeat;
+    width: 100%;
+    height: 30px;
+}
+
+#header_register_img {
+    background: url(../img/register.png) center no-repeat;
+    width: 100%;
+    height: 200px;
+}
+
+#header_login_confirmation_img {
+    background: url(../img/login_confirm.png) center no-repeat;
+    width: 100%;
+    height: 200px;
+}
+
+#header_create_avatar_img {
+    background: url(../img/create_avatar.png) center no-repeat;
+    width: 100%;
+    height: 200px;
+}
+
+#header_ready_img {
+    background: url(../img/ready.png) center no-repeat;
+    width: 100%;
+    height: 200px;
+}
+
+#kheyos_promo_img {
+    width: 100%;
+}
+
+#avatar_default_profile_pic {
+    background: url(../img/default-profile.png) center no-repeat;
+    height: 60px;
+    width: 60px;
+"
+}
+
+#cover_default_pic {
+    background: url(../img/default-cover.png) center no-repeat;
+    height: 30px;
+    width: 48px;
+"
+}
+
+#first_avatar_profile_pic_container {
+    height: 70px;
+    width: 70px;
+}
+
+#first_avatar_profile_pic {
+    height: 100%;
+    width: 100%;
+}
+
+@media (max-width: 780px) {
+    #header_register_img {
+        background: url(../img/register_solo.png) center no-repeat;
+        width: 100%;
+        height: 200px;
+    }
+
+    #header_login_confirmation_img {
+        background: url(../img/login_confirm_solo.png) center no-repeat;
+        width: 100%;
+        height: 200px;
+    }
+
+    #header_create_avatar_img {
+        background: url(../img/create_avatar_solo.png) center no-repeat;
+        width: 100%;
+        height: 200px;
+    }
+
+    #header_ready_img {
+        background: url(../img/ready_solo.png) center no-repeat;
+        width: 100%;
+        height: 200px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #kheyos_promo_div {
+        display: none;
+    }
+}
+
+.add_display_none {
+    display: none;
+}
+
+.btn-register {
+    color: #ffffff;
+    background-color: #ffa800;
+    border-color: #da9001;
+}
+
+.btn-register:hover,
+.btn-register:focus,
+.btn-register:active,
+.btn-register.active,
+.open .dropdown-toggle.btn-register {
+    color: #ffffff;
+    background-color: #da9001;
+    border-color: #d78e00;
+}
+
+.btn-register:active,
+.btn-register.active,
+.open .dropdown-toggle.btn-register {
+    background-image: none;
+}
+
+.btn-login-confirm {
+    color: #ffffff;
+    background-color: #9eca23;
+    border-color: #80a31e;
+}
+
+.btn-login-confirm:hover,
+.btn-login-confirm:focus,
+.btn-login-confirm:active,
+.btn-login-confirm.active,
+.open .dropdown-toggle.btn-login-confirm {
+    color: #ffffff;
+    background-color: #80a31e;
+    border-color: #607b15;
+}
+
+.btn-login-confirm:active,
+.btn-login-confirm.active,
+.open .dropdown-toggle.btn-login-confirm {
+    background-image: none;
+}
+
+.btn-create-avatar {
+    color: #ffffff;
+    background-color: #5cb2bc;
+    border-color: #448188;
+}
+
+.btn-create-avatar:hover,
+.btn-create-avatar:focus,
+.btn-create-avatar:active,
+.btn-create-avatar.active,
+.open .dropdown-toggle.btn-create-avatar {
+    color: #ffffff;
+    background-color: #448188;
+    border-color: #336267;
+}
+
+.btn-create-avatar:active,
+.btn-create-avatar.active,
+.open .dropdown-toggle.btn-create-avatar {
+    background-image: none;
+}
+
+.btn-ready {
+    color: #ffffff;
+    background-color: #d4ba3f;
+    border-color: #c7b85b;
+}
+
+.btn-ready:hover,
+.btn-ready:focus,
+.btn-ready:active,
+.btn-ready.active,
+.open .dropdown-toggle.btn-ready {
+    color: #ffffff;
+    background-color: #c7b85b;
+    border-color: #baac52;
+}
+
+.btn-ready:active,
+.btn-ready.active,
+.open .dropdown-toggle.btn-ready {
+    background-image: none;
+}
+
+.error_message {
+    color: red;
+    display: none;
+}
+
+.span_center {
+    text-align: center;
+}
+
+.span_right {
+    text-align: right;
+}
+
+#navbar_kheyos_logo {
+    margin-top: 15px;
+}
+
+#header_navbar_logo {
+    background: url(../ico/kheyos-icon-32.png) center no-repeat;
+    width: 60px;
+    height: 40px;
+}
+
+.btn-change-avatar {
+    color: #ffffff;
+    background-color: #bdbdbd;
+    border-color: #adadad;
+}
+
+.btn-change-avatar:hover,
+.btn-change-avatar:focus,
+.btn-change-avatar:active,
+.btn-change-avatar.active,
+.open .dropdown-toggle.btn-change-avatar {
+    color: #ffffff;
+    background-color: #adadad;
+    border-color: #a0a0a0;
+}
+
+.btn-change-avatar:active,
+.btn-change-avatar.active,
+.open .dropdown-toggle.btn-change-avatar {
+    background-image: none;
+}
+
+a.list-group-item.active,
+a.list-group-item.active:hover,
+a.list-group-item.active:focus {
+    z-index: 2;
+    color: #ffffff;
+    background-color: #bfbfbf;
+    border-color: #bfbfbf;
+}
+
+@media (min-width: 800px) {
+    .primary_page_body .container {
+        width: 800px;
+    }
+}
+
+@media (max-width: 300px) {
+    .primary_page_body .container {
+        width: 300px;
+    }
+}
+
+.item .chumma {
+    padding-right: 0px;
+    padding-bottom: 0px;
+    text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.93);
+}
+
+.item .chumma p span {
+    background: url(../img/gray-bg-50pc.png);
+}
+
+.item .chumma p span a {
+    color: white;
+
+    text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.93);
+}
+
+.footer-default-links {
+    margin-top: 20px;
+    padding-left: 0;
+    color: #999
+}
+
+.footer-default-links li {
+    display: inline;
+    padding: 0 2px
+}
+
+.footer-default-links li:first-child {
+    padding-left: 0;
+}
+
+/* Featurettes
+------------------------- */
+
+.featurette-divider {
+    margin: 80px 0; /* Space out the Bootstrap <hr> more */
+}
+
+/* Thin out the marketing headings */
+.featurette-heading {
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+@media (min-width: 768px) {
+    .featurette-heading {
+        font-size: 50px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 999px) {
+    .modal-lg {
+        position: relative;
+        width: auto;
+        margin: 10px;
+    }
+
+    .modal-lg form {
+        position: relative;
+        width: auto;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 300px) {
+    .modal-dialog {
+        position: relative;
+        width: 300px;
+        margin: 10px;
+    }
+
+    .modal-dialog form {
+        position: relative;
+        width: auto;
+        margin: 10px;
+    }
+}
+
+@media (min-width: 992px) {
+    .featurette-heading {
+        margin-top: 60px;
+    }
+}
+
+.dropdown-menu li:hover .sub-menu {
+    visibility: visible;
+}
+
+.add_link_blue {
+    color: #428bca;
+}
+
+.add_link_blue:hover, .add_link_blue:focus {
+    color: #2a6496;
+    cursor: pointer
+}
+
+.add_link_gray {
+    color: #888;
+}
+
+.add_link_gray:hover, .add_link_gray:focus {
+    color: #333;
+    text-decoration: underline;
+    cursor: pointer
+}
+
+.width_50 {
+    width: 50px;
+}
+
+.default_profile_50 {
+    background: url(../img/default-profile-50.png) center no-repeat;
+    height: 50px;
+}
+
+.width_35 {
+    width: 35px;
+}
+
+.default_profile_35 {
+    background: url(../img/default-profile-35.png) center no-repeat;
+    height: 35px;
+}
+
+.width_30 {
+    width: 30px;
+}
+
+.default_profile_30 {
+    background: url(../img/default-profile-30.png) center no-repeat;
+    height: 30px;
+}
+
+.width_20 {
+    width: 20px;
+}
+
+.default_profile_20 {
+    background: url(../img/default-profile-20.png) center no-repeat;
+    height: 20px;
+}
+
+.width_100pc {
+    width: 100%;
+}
+
+.avatars_page_avatars_list > .list-group-item {
+    background: #F8F8F8;
+    color: #428bca;
+}
+
+.avatars_page_avatars_list > .list-group-item:hover {
+    background: #FFF;
+    color: #2a6496;
+    text-decoration: underline;
+    cursor: pointer
+}
+
+.carousel_img_location {
+    background: url(../img/gray-bg-50pc.png);
+}
+
+.add_color_gray {
+    color: #888;
+}
+
+.add_font-size_32 {
+    font-size: 32px;
+}
+
+.modal-content {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.add_display_inline_block {
+    display: inline-block;
+}
