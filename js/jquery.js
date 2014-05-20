@@ -1787,8 +1787,8 @@
         return u >= 0 && (i = e.slice(u, e.length), e = e.slice(0, u)), b.isFunction(n) ? (r = n, n = t) : n && "object" == typeof n && (a = "POST"), s.length > 0 && b.ajax({url: e, type: a, dataType: "html", data: n}).done(function (e) {
             o = arguments, s.html(i ? b("<div>").append(b.parseHTML(e)).find(i) : e)
         }).complete(r && function (e, t) {
-                s.each(r, o || [e.responseText, t, e])
-            }), this
+            s.each(r, o || [e.responseText, t, e])
+        }), this
     }, b.each(["ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend"], function (e, t) {
         b.fn[t] = function (e) {
             return this.on(t, e)

@@ -6,8 +6,10 @@ if ($_SESSION['user_id'] == null) {
 }
 
 require_once 'app/Avatars.php';
+require_once 'app/Pictures.php';
 require_once 'app/ProcessForm.php';
 
+$objPictures = new Pictures();
 $objAvatars = new Avatars();
 $avatar_ids = $objAvatars->AvatarList($_SESSION['user_id']);
 
@@ -67,13 +69,25 @@ $token = $objProcessForm->GenerateFormToken('FormUpdateStatus');
                     <?php
                     for ($i = 0; $i < count($avatar_ids); $i++) {
                         $avatar_info = $objAvatars->GetAvatarInfo($avatar_ids[$i]);
+                        $picture_id = $objPictures->GetProfilePictureId($avatar_ids[$i]);
                         ?>
 
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="chkAvatars[]" value="<?php echo $avatar_ids[$i]; ?> ">
-                                <img src="img/default.png" class="width_20"/>
+
                                 <?php
+                                if ($picture_id == "") {
+
+                                    ?>
+                                    <img src="img/default.png" class="width_20"/>
+                                <?php
+                                } else {
+                                    ?>
+                                    <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"
+                                         class="width_20"/>
+                                <?php
+                                }
                                 echo $avatar_info['name'];
                                 ?>
                             </label>

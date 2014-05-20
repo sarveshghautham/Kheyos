@@ -2,10 +2,14 @@
 session_start();
 
 require_once 'app/Avatars.php';
+require_once 'app/Avatars.php';
+
 $avatar_id = $_SESSION['avatar_id'];
 
 $objAvatars = new Avatars();
 $avatar_info = $objAvatars->GetAvatarInfo($avatar_id);
+
+$picture_id = $_SESSION['picture_id'];
 
 ?>
 <!DOCTYPE html>
@@ -50,7 +54,7 @@ require_once 'navbar.php';
                 <div class="row">
                     <div class="col-md-12">
                         <div class="width_50 default_profile_50 add_display_inline_block">
-                            <img src="get_profile_pic.php?picture_id=<?php echo $avatar_info['picture_id']; ?>"
+                            <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"
                                  class="width_50"/>
                         </div>
                     </div>

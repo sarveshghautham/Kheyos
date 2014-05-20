@@ -49,7 +49,7 @@ class Users
 
                 if ($CountAvatar == 0) {
                     $_SESSION['first_avatar'] = 1;
-                    header('Location: create_first_avatar.php');
+                    header('Location: create_first_avatar_1.php');
                 } else {
                     header('Location: home.php');
                 }
@@ -111,7 +111,7 @@ class Users
         if (mysqli_query($this->ObjDBConnection->link, $query)) {
 
             $message = "Click on the link to activate your account \n\n";
-            $message .= "http://162.253.224.4/~kheyosco/Kheyos/login_confirmation.php?email=" . $_SESSION['email'] . "&uid=" . $activation;
+            $message .= "http://www.kheyos.com/Kheyos/login_confirmation.php?email=" . $_SESSION['email'] . "&uid=" . $activation;
             $message .= "\n\nRegards, \n";
             $message .= "Kheyos Team";
 

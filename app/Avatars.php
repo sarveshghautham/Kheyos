@@ -25,16 +25,16 @@ class Avatars
         $this->ObjProcessForm = new ProcessForm();
     }
 
-    public function CreateFirstAvatar($form)
+    public function CreateNewAvatarStep1($form)
     {
 
         $whiteList = array('token',
-            'profPicture',
             'txtName',
             'txtHandle',
             'txtBio',
             'txtDate',
             'txtLocation',
+            'radioType',
             'btnCreate'
         );
 
@@ -43,26 +43,22 @@ class Avatars
             $user_id = $_SESSION['user_id'];
             $bio = addslashes($_POST['txtBio']);
 
+            if (isset ($_SESSION['first_avatar'])) {
+                $avatar_type = 0;
+            } else {
+                $avatar_type = $_POST['radioType'];
+            }
+
             //Input is free from hacks. Now insert into DB.
-            $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', '$_POST[txtDate]', '$_POST[txtLocation]', NOW())";
+            $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', '0000-00-00','0','$avatar_type', '$_POST[txtLocation]', NOW())";
 
             if (mysqli_query($this->ObjDBConnection->link, $query)) {
 
                 $avatar_id = mysqli_insert_id($this->ObjDBConnection->link);
                 $_SESSION['avatar_id'] = $avatar_id;
 
-                $objPictures = new Pictures();
-                $picture_id = $objPictures->UploadProfilePicture();
+                header('Location: create_new_avatar_2.php');
 
-                if ($picture_id != 0) {
-
-                    $_SESSION['picture_id'] = $picture_id;
-                    unset ($_SESSION['first_avatar']);
-                    header('Location: crop.php');
-
-                } else {
-                    header('Location: create_new_avatar_ready.php');
-                }
             } else {
                 echo mysqli_error($this->ObjDBConnection->link);
             }
@@ -71,43 +67,40 @@ class Avatars
         }
     }
 
-    public function CreateNewAvatar($form)
+    public function CreateNewAvatarStep2($form)
     {
 
         $whiteList = array('token',
             'profPicture',
-            'txtName',
-            'txtHandle',
-            'txtBio',
             'txtDate',
-            'txtLocation',
-            'btnCreate'
+            'radioGender',
+            'btnCreate2'
         );
 
-        if ($this->ObjProcessForm->FormPOST($form, 'btnCreate', $whiteList)) {
+        if ($this->ObjProcessForm->FormPOST($form, 'btnCreate2', $whiteList)) {
 
-            $user_id = $_SESSION['user_id'];
-            $bio = addslashes($_POST['txtBio']);
+            $avatar_id = $_SESSION['avatar_id'];
 
             //Input is free from hacks. Now insert into DB.
-            $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', '$_POST[txtDate]', '$_POST[txtLocation]', NOW())";
-
+            $query = "UPDATE Avatars SET dob='$_POST[txtDate]', gender='$_POST[radioGender]' WHERE avatar_id='$avatar_id'";
             if (mysqli_query($this->ObjDBConnection->link, $query)) {
-
-                $avatar_id = mysqli_insert_id($this->ObjDBConnection->link);
-                $_SESSION['avatar_id'] = $avatar_id;
 
                 $objPictures = new Pictures();
                 $picture_id = $objPictures->UploadProfilePicture();
+                $_SESSION['picture_id'] = $picture_id;
 
                 if ($picture_id != 0) {
-
-                    $_SESSION['picture_id'] = $picture_id;
                     header('Location: crop.php');
 
                 } else {
-                    header('Location: create_new_avatar_ready.php');
+
+                    if (isset ($_SESSION['first_avatar'])) {
+                        header('Location: ready.php');
+                    } else {
+                        header('Location: create_new_avatar_ready.php');
+                    }
                 }
+
             } else {
                 echo mysqli_error($this->ObjDBConnection->link);
             }
@@ -126,6 +119,8 @@ class Avatars
             'txtBio',
             'txtDate',
             'txtLocation',
+            'radioGender',
+            'radioType',
             'avatar_id',
             'btnEdit'
         );
@@ -141,12 +136,13 @@ class Avatars
 
             $bio = addslashes($_POST['txtBio']);
 
-            //Input is free from hacks. Now insert into DB.
-            $query = "UPDATE Avatars SET name = '$_POST[txtName]', handle = '$_POST[txtHandle]', bio = '$bio', dob='$_POST[txtDate]', location='$_POST[txtLocation]' WHERE avatar_id='$avatar_id'";
+            // Input is free from hacks. Now insert into DB.
+            $query = "UPDATE Avatars SET name = '$_POST[txtName]', handle = '$_POST[txtHandle]', bio = '$bio', dob='$_POST[txtDate]', location='$_POST[txtLocation]', gender='$_POST[radioGender]', avatar_type='$_POST[radioType]' WHERE avatar_id='$avatar_id'";
             if (mysqli_query($this->ObjDBConnection->link, $query)) {
                 if ($picture_id != 0) {
                     $_SESSION['picture_id'] = $picture_id;
                     header('Location: crop.php');
+
                 } else {
                     header('Location: my_avatars.php');
                 }
@@ -218,4 +214,136 @@ class Avatars
 
     }
 
-} 
+}
+
+
+/*
+public function CreateFirstAvatarStep1($form)
+{
+
+    $whiteList = array('token',
+        'txtName',
+        'txtHandle',
+        'txtBio',
+        'txtDate',
+        'txtLocation',
+        'btnCreate'
+    );
+
+    if ($this->ObjProcessForm->FormPOST($form, 'btnCreate', $whiteList)) {
+
+        $user_id = $_SESSION['user_id'];
+        $bio = addslashes($_POST['txtBio']);
+
+        //Input is free from hacks. Now insert into DB.
+        $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', '$_POST[txtDate]', '$_POST[txtLocation]', NOW())";
+
+        if (mysqli_query($this->ObjDBConnection->link, $query)) {
+
+            $avatar_id = mysqli_insert_id($this->ObjDBConnection->link);
+            $_SESSION['avatar_id'] = $avatar_id;
+
+            header('Location: create_first_avatar_2.php');
+
+        } else {
+            echo mysqli_error($this->ObjDBConnection->link);
+        }
+    } else {
+        header('Location: error.php');
+    }
+}
+
+public function CreateFirstAvatarStep2($form)
+{
+
+    $whiteList = array('token',
+        'profPicture',
+        'txtDate',
+        'radioGender',
+        'radioType',
+        'btnCreate2'
+    );
+
+    if ($this->ObjProcessForm->FormPOST($form, 'btnCreate', $whiteList)) {
+
+        $user_id = $_SESSION['user_id'];
+        $bio = addslashes($_POST['txtBio']);
+        $avatar_id = $_SESSION['avatar_id'];
+
+        //Input is free from hacks. Now insert into DB.
+        //$query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', '$_POST[txtDate]', '$_POST[txtLocation]', NOW())";
+
+        $query = "UPDATE Avatars SET dob='$_POST[txtDate], gender='$_POST[radioGender]', avatar_type='$_POST[radioType]'";
+        if (mysqli_query($this->ObjDBConnection->link, $query)) {
+
+            $avatar_id = mysqli_insert_id($this->ObjDBConnection->link);
+            $_SESSION['avatar_id'] = $avatar_id;
+
+            $objPictures = new Pictures();
+            $picture_id = $objPictures->UploadProfilePicture();
+
+            if ($picture_id != 0) {
+
+                $_SESSION['picture_id'] = $picture_id;
+                unset ($_SESSION['first_avatar']);
+                header('Location: crop.php');
+
+            } else {
+                header('Location: create_new_avatar_ready.php');
+            }
+
+            header('Location: create_first_avatar_2.php');
+
+        } else {
+            echo mysqli_error($this->ObjDBConnection->link);
+        }
+    } else {
+        header('Location: error.php');
+    }
+}
+
+public function CreateNewAvatar($form)
+{
+
+    $whiteList = array('token',
+        'profPicture',
+        'txtName',
+        'txtHandle',
+        'txtBio',
+        'txtDate',
+        'txtLocation',
+        'btnCreate'
+    );
+
+    if ($this->ObjProcessForm->FormPOST($form, 'btnCreate', $whiteList)) {
+
+        $user_id = $_SESSION['user_id'];
+        $bio = addslashes($_POST['txtBio']);
+
+        //Input is free from hacks. Now insert into DB.
+        $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', '$_POST[txtDate]', '$_POST[txtLocation]', NOW())";
+
+        if (mysqli_query($this->ObjDBConnection->link, $query)) {
+
+            $avatar_id = mysqli_insert_id($this->ObjDBConnection->link);
+            $_SESSION['avatar_id'] = $avatar_id;
+
+            $objPictures = new Pictures();
+            $picture_id = $objPictures->UploadProfilePicture();
+
+            if ($picture_id != 0) {
+
+                $_SESSION['picture_id'] = $picture_id;
+                header('Location: crop.php');
+
+            } else {
+                header('Location: create_new_avatar_ready.php');
+            }
+        } else {
+            echo mysqli_error($this->ObjDBConnection->link);
+        }
+    } else {
+        header('Location: error.php');
+    }
+}
+*/

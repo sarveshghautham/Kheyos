@@ -25,7 +25,6 @@ class Status
     public function UpdateStatus($form)
     {
 
-
         $whiteList = array('token',
             'txtStatus',
             'chkAvatars',
@@ -39,7 +38,8 @@ class Status
 
             for ($i = 0; $i < count($avatar_ids); $i++) {
 
-                $inactive_query = "UPDATE Status SET active = '0' WHERE avatar_id='$avatar_ids[$i]'";
+                $current_active_status_id = $this->GetActiveStatusId($avatar_ids[$i]);
+                $inactive_query = "UPDATE Status SET active = '0' WHERE status_id='$current_active_status_id'";
                 mysqli_query($this->ObjDBConnection->link, $inactive_query);
 
                 $query = "INSERT INTO Status VALUES (DEFAULT, '$avatar_ids[$i]', '$_POST[txtStatus]', '1', NOW())";
@@ -63,4 +63,45 @@ class Status
         return $row;
     }
 
+    function GetActiveStatusId($avatar_id)
+    {
+        $query = "SELECT status_id FROM Status WHERE avatar_id='$avatar_id' AND active='1'";
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+        return $row['status_id'];
+    }
+
+    function GetAllStatusIds($avatar_id)
+    {
+
+        $i = 0;
+        $query = "SELECT status_id FROM Status WHERE avatar_id='$avatar_id' ORDER BY time DESC";
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            $status_ids[$i] = $row['status_id'];
+            $i++;
+        }
+
+        return $status_ids;
+    }
+
+    function GetStatusTimeStamp($status_id)
+    {
+
+        $query = "SELECT time FROM Status WHERE status_id = '$status_id'";
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+        return $row['time'];
+    }
+
+    function GetStatusInfo($status_id)
+    {
+        $query = "SELECT * FROM Status WHERE status_id='$status_id'";
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+        return $row;
+    }
 } 

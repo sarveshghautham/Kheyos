@@ -11,7 +11,7 @@
     <?php
     for ($i = 0; $i < count($avatar_ids); $i++) {
         $avatar_info = $objAvatars->GetAvatarInfo($avatar_ids[$i]);
-        $picture_id = $objPictures->GetPictureId($avatar_ids[$i]);
+        $picture_id = $objPictures->GetProfilePictureId($avatar_ids[$i]);
         ?>
         <a href="#<?php echo $avatar_info['handle']; ?>" class="avatar-list list-group-item
             <?php
@@ -34,7 +34,7 @@
     <?php
     }
     ?>
-    <a href="create_new_avatar.php" class="list-group-item">
+    <a href="create_new_avatar_1.php" class="list-group-item">
         Create New Avatar
     </a>
 </div>

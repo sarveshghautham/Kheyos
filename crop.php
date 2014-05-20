@@ -2,6 +2,10 @@
 
 session_start();
 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.php');
+}
+
 if (isset($_SESSION['picture_id'])) {
     $picture_id = $_SESSION['picture_id'];
 } else {
@@ -11,9 +15,13 @@ if (isset($_SESSION['picture_id'])) {
 require_once 'app/Pictures.php';
 $objPictures = new Pictures();
 
-
 if (isset($_POST['btnCrop'])) {
-    $objPictures->CropImage("300", "300");
+    if (isset ($_SESSION['cover_pic'])) {
+        $objPictures->CropImage("900", "500");
+    } else {
+        $objPictures->CropImage("300", "300");
+    }
+
 } else if (isset($_POST['btnDisable'])) {
     $objPictures->DeletePic($picture_id);
 }
@@ -36,7 +44,19 @@ if (isset($_POST['btnCrop'])) {
 
             $('#cropbox').Jcrop({
                 aspectRatio: 1,
+                <?php
+                    if (isset ($_SESSION['cover_pic'])) {
+                ?>
+                minSize: [ 900, 500 ],
+                <?php
+                    }
+                    else {
+                ?>
                 minSize: [ 300, 300 ],
+                <?php
+                    }
+                ?>
+
                 onSelect: updateCoords
 
             });

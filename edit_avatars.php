@@ -8,7 +8,13 @@ if ($_SESSION['user_id'] == null) {
 require_once 'app/Avatars.php';
 require_once 'app/Pictures.php';
 
-$avatar_id = $_POST['avatar_id'];
+if (!isset($_POST['btnEdit'])) {
+    if ($_GET['avatar_id'] == null) {
+        header('Location: my_avatars.php');
+    }
+}
+
+$avatar_id = filter_input(INPUT_GET, 'avatar_id', FILTER_SANITIZE_NUMBER_INT);
 
 $objAvatars = new Avatars();
 $objPictures = new Pictures();

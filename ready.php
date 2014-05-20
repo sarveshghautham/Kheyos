@@ -4,6 +4,8 @@ session_start();
 require_once 'app/Avatars.php';
 $avatar_id = $_SESSION['avatar_id'];
 
+unset($_SESSION['first_avatar']);
+
 $objAvatars = new Avatars();
 $avatar_info = $objAvatars->GetAvatarInfo($avatar_id);
 

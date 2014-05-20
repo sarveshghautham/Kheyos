@@ -23,21 +23,42 @@ a:hover {
  * Base structure
  */
 
-html {
+html,
+body {
     height: 100%;
-    background: url(../img/cover-photo.jpg) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    background-color: #BBB;
 }
 
 body {
     color: #fff;
+    text-align: center;
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, .5);
 
-    box-shadow: inset 0 2px 2px rgba(0, 0, 0, .2);
-    min-height: 100%;
-    background: url(../img/gray-bg-50pc.png);
+}
+
+body .cover_content_container {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+
+}
+
+body .container {
+    background: #CCC;
+}
+
+.primary_page_body_cover_profile {
+    padding-top: 0px;
+}
+
+@media (min-width: 800px) {
+    .primary_page_body_cover_profile .container {
+        width: 800px;
+    }
+}
+
+@media (max-width: 300px) {
+    .primary_page_body_cover_profile .container {
+        width: 300px;
+    }
 }
 
 /* Extra markup and styles for table-esque vertical and horizontal centering */
@@ -46,21 +67,16 @@ body {
     width: 100%;
     height: 100%; /* For at least Firefox */
     min-height: 100%;
-    text-align: center;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
-
 }
 
 .site-wrapper-inner {
     display: table-cell;
     vertical-align: top;
-
 }
 
 .cover-container {
     margin-right: auto;
     margin-left: auto;
-
 }
 
 /* Padding for spacing */
@@ -146,13 +162,13 @@ body {
 @media (min-width: 768px) {
     /* Pull out the header and footer */
     .masthead {
+        position: fixed;
         top: 0;
     }
 
     .mastfoot {
         position: fixed;
         bottom: 0;
-        right: 0;
     }
 
     /* Start the vertical centering */
@@ -174,31 +190,4 @@ body {
     .cover-container {
         width: 700px;
     }
-}
-
-@media (min-width: 768px) {
-    .inner.cover {
-        padding-top: 100px;
-    }
-}
-
-@media (max-width: 400px) {
-    body {
-        width: 400px;
-    }
-}
-
-.bs-docs-footer-links {
-    margin-top: 20px;
-    padding-left: 0;
-    color: #999
-}
-
-.bs-docs-footer-links li {
-    display: inline;
-    padding: 0 2px
-}
-
-.bs-docs-footer-links li:first-child {
-    padding-left: 0
 }

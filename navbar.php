@@ -70,8 +70,8 @@ $pageName = $_SERVER['REQUEST_URI'];
                     </a>
                 </li>
                 <li>
-                    <a href="update_cover_page.html" data-toggle="modal" data-target=".update-cover-modal"
-                       data-remote="update_cover_page.html #update_status_page_form">
+                    <a href="update_cover_page.php" data-toggle="modal" data-target=".update-cover-modal"
+                       data-remote="update_cover_page.php #update_status_page_form">
                         <span class="glyphicon glyphicon-picture"></span>
                         <span id="navbar-text-update-cover">Update Cover</span>
                     </a>

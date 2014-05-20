@@ -21,6 +21,10 @@ body {
     #navbar-text-update-status {
         display: none;
     }
+
+    .fillers_min_768 {
+        display: none;
+    }
 }
 
 .popover.bottom > .arrow {
@@ -36,6 +40,10 @@ body {
     margin-bottom: 15px;
 }
 
+.notes_display_block {
+    margin-bottom: 15px;
+}
+
 @media (max-width: 768px) {
     .post_owner_block {
         text-align: center;
@@ -45,6 +53,10 @@ body {
     .followed_by_dropdown_menu {
         left: -45px;
         right: auto;
+    }
+
+    .notes_display_block_date {
+        text-align: left;
     }
 }
 
@@ -167,6 +179,10 @@ hr {
         background: url(../img/ready_solo.png) center no-repeat;
         width: 100%;
         height: 200px;
+    }
+
+    .fillers_max_780 {
+        display: none;
     }
 }
 
@@ -313,12 +329,18 @@ hr {
     background-image: none;
 }
 
-a.list-group-item.active,
+a.list-group-item.active {
+    z-index: 2;
+    color: #428bca;
+    background-color: #ebeaea;
+    border-color: #bfbfbf;
+}
+
 a.list-group-item.active:hover,
 a.list-group-item.active:focus {
     z-index: 2;
-    color: #ffffff;
-    background-color: #bfbfbf;
+    color: #2a6496;
+    background-color: #ebeaea;
     border-color: #bfbfbf;
 }
 
@@ -442,6 +464,16 @@ a.list-group-item.active:focus {
     cursor: pointer
 }
 
+.add_link_black {
+    color: #000;
+}
+
+.add_link_black:hover, .add_link_black:focus {
+    color: #000;
+    text-decoration: underline;
+    cursor: pointer
+}
+
 .width_50 {
     width: 50px;
 }
@@ -478,6 +510,24 @@ a.list-group-item.active:focus {
     height: 20px;
 }
 
+.width_48 {
+    width: 48px;
+}
+
+.width_45 {
+    width: 45px;
+}
+
+.default_cover_48_30 {
+    background: url(../img/default-cover-48.png) center no-repeat;
+    height: 30px;
+}
+
+.default_cover_45_25 {
+    background: url(../img/default-cover-45-25.png) center no-repeat;
+    height: 25px;
+}
+
 .width_100pc {
     width: 100%;
 }
@@ -502,6 +552,10 @@ a.list-group-item.active:focus {
     color: #888;
 }
 
+.add_font-size_16 {
+    font-size: 20px;
+}
+
 .add_font-size_32 {
     font-size: 32px;
 }
@@ -513,4 +567,20 @@ a.list-group-item.active:focus {
 
 .add_display_inline_block {
     display: inline-block;
+}
+
+.label-transparent {
+    background: url(../img/gray-bg-50pc.png) center repeat;
+}
+
+.btn-file {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    opacity: 0;
+    background-color: transparent;
+    color: transparent;
 }
