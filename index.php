@@ -5,7 +5,7 @@ define ('SITE_ROOT', realpath(dirname(__FILE__)));
 if ($_SESSION['user_id'] != null) {
 
     if ($_SESSION['first_avatar'] == 1) {
-        header('Location: create_first_avatar.php');
+        header('Location: create_first_avatar_1.php');
     } else {
         header('Location: home.php');
     }
@@ -107,20 +107,26 @@ if (isset($_POST['btnLogin'])) {
                         </script>
                     </div>
                     <div class="col-lg-6">
-                        <br/>
 
                         <h2>Log In</h2>
 
-                        <form name="LoginForm" action="index.php" method="POST">
+                        <form name="LoginForm" action="index.php" method="POST" data-toggle="validator">
                             <input type="hidden" name="token" value="<?php echo $token; ?>">
                             <label class="checkbox">
                                 (Or <a href="register.php">Create an Account</a>)
                             </label>
                             <br/>
-                            <input type="email" name="txtEmail" class="form-control" placeholder="Email address"
-                                   required>
-                            <input type="password" name="txtPassword" class="form-control" placeholder="Password"
-                                   required>
+
+                            <div class="form-group">
+                                <input type="email" name="txtEmail" class="form-control" placeholder="Email address"
+                                       autofocus required>
+                                <span class="help-block with-errors"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="txtPassword" class="form-control" placeholder="Password"
+                                       required>
+                                <span class="help-block with-errors"></span>
+                            </div>
                             <br/>
 
                             <div class="row">

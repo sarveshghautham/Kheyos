@@ -61,6 +61,43 @@ class Users
         }
     }
 
+    function LoginFirst($form)
+    {
+        $whiteList = array('token', 'txtEmail', 'txtPassword', 'uid', 'btnLogin');
+
+        if ($this->ObjProcessForm->FormPOST($form, 'btnLogin', $whiteList)) {
+
+            $query = "SELECT user_id, salt, password, active FROM Users WHERE email='$_POST[txtEmail]'";
+            $result = mysqli_query($this->ObjDBConnection->link, $query);
+            $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+            //$options['cost'] = 11;
+            //$options['salt'] = $row['salt'];
+            //$password = password_hash($_POST['txtPassword'], PASSWORD_BCRYPT, $options);
+
+            $salt = $row['salt'];
+            $password = crypt($_POST['txtPassword'], '$6$' . $salt);
+
+            if ($password == $row['password'] && $password != null && $row != null) {
+
+                $_SESSION['user_id'] = $row['user_id'];
+                $_SESSION['email'] = $_POST['txtEmail'];
+                if ($this->ConfirmRegistration($_POST['txtEmail'], $_POST['uid'])) {
+                    $_SESSION['first_avatar'] = 1;
+                    header('Location: create_first_avatar_1.php');
+                } else {
+                    echo "Something wrong";
+                }
+
+            } else {
+                header('Location: login.php');
+            }
+        } else {
+
+            header('Location: error.php');
+        }
+    }
+
     function register($form)
     {
 
@@ -134,9 +171,8 @@ class Users
         }
     }
 
-    function ConfirmRegisteration($email, $uid)
+    function ConfirmRegistration($email, $uid)
     {
-
         $query = "SELECT activation_code FROM UnverifiedUsers WHERE email ='$email'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -144,10 +180,10 @@ class Users
         if ($row['activation_code'] == $uid) {
 
             $query = "UPDATE Users SET active = '1' WHERE email='$email'";
-            $result = mysqli_query($this->ObjDBConnection->link, $query);
+            mysqli_query($this->ObjDBConnection->link, $query);
 
-            $query = "DELETE FROM UnverifiedUsers WHERE email='$email'";
-            $result = mysqli_query($this->ObjDBConnection->link, $query);
+            $del_query = "DELETE FROM UnverifiedUsers WHERE email='$email'";
+            mysqli_query($this->ObjDBConnection->link, $del_query);
 
             return true;
         } else {

@@ -5,13 +5,16 @@ session_start();
 require_once 'app/Users.php';
 $objUsers = new Users();
 
-if ($_GET['email'] == "" || $_GET['uid'] == "") {
-    header('Location: error.php');
+if (!isset ($_POST['btnLogin'])) {
+    if ($_GET['email'] == "" || $_GET['uid'] == "") {
+        header('Location: error.php');
+    }
 }
+
 
 if (isset($_POST['btnLogin'])) {
 
-    $objUsers->login('LoginForm');
+    $objUsers->LoginFirst('LoginForm');
 
 } else {
 
@@ -25,12 +28,12 @@ if (isset($_POST['btnLogin'])) {
         //TODO: Replace with some specific error page.
         header('Location: error.php');
     }
-
-    if (!$objUsers->ConfirmRegisteration($email, $uid)) {
-        //TODO: Replace with some specific error page.
-        header('Location: error.php');
-    }
-
+    /*
+        if (!$objUsers->ConfirmRegisteration($email, $uid)) {
+            //TODO: Replace with some specific error page.
+            header('Location: error.php');
+        }
+*/
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -78,6 +81,7 @@ if (isset($_POST['btnLogin'])) {
                     <br/>
 
                     <input type="hidden" name="token" value="<?php echo $token; ?>">
+                    <input type="hidden" name="uid" value="<?php echo $uid; ?>">
 
                     <div class="row">
                         <div class="col-md-7">
@@ -115,8 +119,8 @@ if (isset($_POST['btnLogin'])) {
 
                     <div class="row">
                         <div class="col-md-7">
-                            <button class="btn btn-lg btn-login-confirm btn-block" name="btnLogin" type="submit">Log
-                                In
+                            <button class="btn btn-lg btn-login-confirm btn-block" name="btnLogin" type="submit">
+                                Log In
                             </button>
                         </div>
                         <div class="col-md-5">
@@ -141,9 +145,7 @@ if (isset($_POST['btnLogin'])) {
     <!-- /container -->
 
     <?php
-
     require_once 'core-javascript.php';
-
     ?>
     </body>
     </html>
