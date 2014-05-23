@@ -47,8 +47,10 @@ class Status
                 mysqli_query($this->ObjDBConnection->link, $query);
             }
             $_SESSION['avatar_id'] = $avatar_ids[0];
+            //$this->ObjDBConnection->DBClose();
             header('Location: my_avatars.php');
         } else {
+            //$this->ObjDBConnection->DBClose();
             echo "Failed";
         }
     }
@@ -59,7 +61,7 @@ class Status
         $query = "SELECT * FROM Status WHERE avatar_id='$avatar_id' AND active='1'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row;
     }
 
@@ -68,7 +70,7 @@ class Status
         $query = "SELECT status_id FROM Status WHERE avatar_id='$avatar_id' AND active='1'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row['status_id'];
     }
 
@@ -82,7 +84,7 @@ class Status
             $status_ids[$i] = $row['status_id'];
             $i++;
         }
-
+        //$this->ObjDBConnection->DBClose();
         return $status_ids;
     }
 
@@ -92,7 +94,7 @@ class Status
         $query = "SELECT time FROM Status WHERE status_id = '$status_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row['time'];
     }
 
@@ -101,7 +103,7 @@ class Status
         $query = "SELECT * FROM Status WHERE status_id='$status_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row;
     }
 } 

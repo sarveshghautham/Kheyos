@@ -3,37 +3,91 @@
 session_start();
 
 if ($_SESSION['user_id'] == null) {
-    header('Location: index.php');
+    header('Location: login.php');
 }
 
-if ($_GET['avatar_id'] == null) {
-    header('Location: my_avatars.php');
-}
-$avatar_id = filter_input(INPUT_GET, 'avatar_id', FILTER_SANITIZE_NUMBER_INT);
+require_once 'app/Follow.php';
+$objFollow = new Follow();
 
-require_once 'app/Avatars.php';
-require_once 'app/Pictures.php';
-require_once 'app/Status.php';
-require_once 'app/Activity.php';
+if (isset ($_POST['btnFollow'])) {
 
-$objActivity = new Activity();
-$objPictures = new Pictures();
-$objAvatar = new Avatars();
-$objStatus = new Status();
+    $objFollow->StartFollowing('FollowForm');
 
-$avatar_info = $objAvatar->GetAvatarInfo($avatar_id);
-$picture_id = $objPictures->GetProfilePictureId($avatar_id);
+} else {
 
-$activities = $objActivity->AvatarActivities($avatar_id);
+    if ($_GET['avatar_id'] == null) {
+        header('Location: my_avatars.php');
+    }
 
-$dob = $avatar_info['dob'];
-$dob = explode("-", $dob);
+    $avatar_id = filter_input(INPUT_GET, 'avatar_id', FILTER_SANITIZE_NUMBER_INT);
+    $user_id = $_SESSION['user_id'];
 
-$month = date("F", mktime(0, 0, 0, $dob[1], 10));
+    require_once 'app/Users.php';
+    require_once 'app/Avatars.php';
+    require_once 'app/Pictures.php';
+    require_once 'app/Status.php';
+    require_once 'app/ProcessForm.php';
+    require_once 'app/Activity.php';
 
-?>
+    $objUsers = new Users();
+    $objActivity = new Activity();
+    $objPictures = new Pictures();
+    $objAvatar = new Avatars();
+    $objStatus = new Status();
 
-<!DOCTYPE html>
+
+    /* Visitor info */
+
+    $name = $objUsers->GetName($user_id);
+    $avatar_list = $objAvatar->AvatarList($user_id);
+    $follow_avatar_list = $objFollow->GetMyFollowingAvatars($avatar_list, $avatar_id);
+
+
+    /* Profile Owner info */
+    $avatar_info = $objAvatar->GetAvatarInfo($avatar_id);
+    $picture_id = $objPictures->GetProfilePictureId($avatar_id);
+    $cover_picture_id = $objPictures->GetCoverPictureId($avatar_id);
+    $pic_timestamp = $objPictures->GetPicTimeStamp($picture_id);
+
+    $dob = $avatar_info['dob'];
+    $dob = explode("-", $dob);
+    $month = date("F", mktime(0, 0, 0, $dob[1], 10));
+
+    $status_info = $objStatus->GetStatus($avatar_id);
+    $timestamp = $status_info['time'];
+    $dateTime = explode(" ", $timestamp);
+    $date = $dateTime[0];
+    $date = explode("-", $date);
+    $time = $dateTime[1];
+    $time = explode(":", $time);
+    if ($time[0] > 12) {
+        $time[0] = $time[0] - 12;
+        $time[1] .= " PM";
+    } else {
+        $time[1] .= " AM";
+    }
+
+    $dateTime = explode(" ", $pic_timestamp);
+    $pic_date = $dateTime[0];
+    $pic_date = explode("-", $pic_date);
+    $pic_time = $dateTime[1];
+
+    $pic_time = explode(":", $pic_time);
+    if ($pic_time[0] > 12) {
+        $pic_time[0] = $pic_time[0] - 12;
+        $pic_time[1] .= " PM";
+    } else {
+        $pic_time[1] .= " AM";
+    }
+
+    $statusMonth = date("F", mktime(0, 0, 0, $date[1], 10));
+    $monthName = date("F", mktime(0, 0, 0, $pic_date[1], 10));
+
+    $objProcessForm = new ProcessForm();
+    $token = $objProcessForm->GenerateFormToken('FollowForm');
+
+    ?>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -45,6 +99,7 @@ $month = date("F", mktime(0, 0, 0, $dob[1], 10));
 
     <title>Kheyos: One login for the entire WEB.</title>
 
+
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -55,25 +110,94 @@ $month = date("F", mktime(0, 0, 0, $dob[1], 10));
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+
+    <script>
+        // Attach a submit handler to the form
+        $("#FollowForm1").submit(function (event) {
+
+            // Stop form from submitting normally
+            event.preventDefault();
+
+            // Get some values from elements on the page:
+            var $form = $(this),
+                term = $form.find("input[name='s']").val(),
+                url = $form.attr("action");
+
+            // Send the data using post
+            var posting = $.post(url, { s: term });
+
+            // Put the results in a div
+            posting.done(function (data) {
+                var content = $(data).find("#content");
+                $("#result").empty().append(content);
+            });
+        });
+    </script>
+
     <![endif]-->
 </head>
 
 <body class="primary_page_body">
 <?php
-
 require_once 'navbar.php';
-
 ?>
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-2 text-center">
-            <a href="javascript:history.back()" class="add_link_gray">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-            </a>
-            <hr class="fillers_min_768"/>
+        <div class="col-sm-4">
+            <div class="well well-sm col-sm-12">
+                <h4><?php echo $name; ?></h4>
+                <h5>Followed with <?php echo count($follow_avatar_list); ?> Avatars</h5>
+            </div>
+            <form id="FollowForm" name="FollowForm" method="POST" action="profile.php">
+                <input type="hidden" name="token" value="<?php echo $token; ?>">
+                <input type="hidden" name="avatar_id" value="<?php echo $avatar_id; ?>">
+                <input type="hidden" name="my_avatar_count" value="<?php echo count($avatar_list); ?>">
+
+                <div class="col-sm-12 post_display_block">
+
+                    <?php
+                    for ($i = 0; $i < count($avatar_list); $i++) {
+
+                        $my_avatar_info = $objAvatar->GetAvatarInfo($avatar_list[$i]);
+                        $my_picture_id = $objPictures->GetProfilePictureId($avatar_list[$i]);
+
+                        ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="hidden" name="my_avatar_id_<?php echo $i; ?>"
+                                       value="<?php echo $avatar_list[$i]; ?>">
+                                <input type="checkbox" name="my_avatar_ids[]" value="<?php echo $avatar_list[$i]; ?>"
+                                    <?php
+                                    if (count($follow_avatar_list) != 0) {
+                                        if (in_array($avatar_list[$i], $follow_avatar_list)) {
+                                            echo "Checked";
+                                        }
+                                    }
+                                    ?>
+
+                                    >
+                                <img src="get_profile_pic.php?picture_id=<?php echo $my_picture_id; ?>"
+                                     class="width_20"/>
+                                <?php
+                                echo $my_avatar_info['handle'];
+                                ?>
+                            </label>
+                        </div>
+
+                    <?php
+                    }
+                    ?>
+
+                </div>
+                <div class="col-sm-12 text-right post_display_block">
+                    <button type="button" class="btn btn-default">Deselect All</button>
+                    <button type="submit" name="btnFollow" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+            <hr/>
         </div>
-        <div class="col-sm-10">
+        <div class="col-sm-8">
             <div class="col-xs-12 post_display_block">
                 <div class="width_35 default_profile_35 add_display_inline_block">
                     <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>" class="width_35"/>
@@ -92,62 +216,47 @@ require_once 'navbar.php';
             </div>
             <div class="col-xs-12 post_display_block">
                 <hr/>
-                <h4>
-                    Activity Log
-                </h4>
             </div>
-
             <?php
-            for ($i = 0; $i < count($activities); $i++) {
-
-                if ($activities[$i]['type'] == "status") {
-
-                    $status_id = $activities[$i]['id'];
-                    $status_info = $objStatus->GetStatusInfo($status_id);
+            if ($status_info != null) {
+                ?>
+                <div class="col-xs-12 post_display_block">
+                    <a><?php echo $time[0] . ":" . $time[1] . " - " . $date[2] . " " . $statusMonth . " " . $date[0]; ?></a>
+                    <br/>
+                    <?php
+                    echo $status_info['text'];
                     ?>
-                    <div class="col-xs-12 post_display_block">
-                        <a><?php echo $status_info['time']; ?></a>
-                        <br/>
-                        <?php echo $status_info['text']; ?>
-                        <br/>
-                        <a href="#">Like</a>
-                        &middot;
-                        <a href="#">Comment</a>
-                        <br/>
-                    </div>
+                    <br/>
+                    <a href="#">Like</a>
+                    &middot;
+                    <a href="#">Comment</a>
+                    <br/>
+                </div>
+            <?php
+            }
 
-                <?php
-                } else if ($activities[$i]['type'] == "picture") {
-                    $picture_id = $activities[$i]['id'];
-                    $timestamp = $objPictures->GetPicTimeStamp($picture_id);
-                    ?>
-                    <div class="col-xs-12 post_display_block">
-                        <a><?php echo $timestamp; ?></a>
+            if ($cover_picture_id != 0) {
+                ?>
 
-                        <div class="item active">
-                            <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>" style="width: 100%;"
-                                 class="img-thumbnail">
+                <div class="col-xs-12 post_display_block">
+                    <a><?php echo $pic_time[0] . ":" . $pic_time[1] . " - " . $pic_date[2] . " " . $monthName . " " . $pic_date[0]; ?></a>
 
-                            <div class="container">
-                                <div class="carousel-caption">
-                                    <p class="text-right">
-                                    <span class="label label-transparent" style="font-size:130%;">
-                                        Chennai, India
-                                    </span>
-                                    </p>
-                                </div>
-                            </div>
+                    <div class="item active">
+                        <img src="get_profile_pic.php?picture_id=<?php echo $cover_picture_id; ?>" class="width_100pc">
+
+                        <div class="carousel-caption">
+                            <p class="text-right">
+                                <span class="label label-transparent" style="font-size:130%;">Chennai, India</span>
+                            </p>
+                        </div>
                         </div>
                         <a href="#">Like</a>
                         &middot;
                         <a href="#">Comment</a>
                     </div>
-
-                <?php
-                }
+            <?php
             }
             ?>
-
         </div>
     </div>
     <hr/>
@@ -215,3 +324,5 @@ require_once 'navbar.php';
 <!-- /core-javascript.html -->
 </body>
 </html>
+<?php
+}

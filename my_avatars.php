@@ -8,10 +8,12 @@ if ($_SESSION['user_id'] == null) {
 require_once 'app/Avatars.php';
 require_once 'app/Status.php';
 require_once 'app/Pictures.php';
+require_once 'app/Follow.php';
 
 $objStatus = new Status();
 $objAvatars = new Avatars();
 $objPictures = new Pictures();
+$objFollow = new Follow();
 
 $avatar_ids = $objAvatars->AvatarList($_SESSION['user_id']);
 

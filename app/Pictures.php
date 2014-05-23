@@ -60,12 +60,12 @@ class Pictures
                 $picture_id = mysqli_insert_id($this->ObjDBConnection->link);
 
                 //$this->AutoCropImage("300", "300", $path, $newName, $type);
-
+                //$this->ObjDBConnection->DBClose();
                 return $picture_id;
             }
 
         } else {
-
+            //$this->ObjDBConnection->DBClose();
             return 0;
         }
     }
@@ -75,7 +75,7 @@ class Pictures
         $query = "SELECT * FROM Pictures WHERE picture_id = '$picture_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row;
     }
 
@@ -85,7 +85,7 @@ class Pictures
         $query = "SELECT picture_id FROM Pictures WHERE avatar_id='$avatar_id' AND active='1' AND profile_pic='1'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row['picture_id'];
     }
 
@@ -132,9 +132,10 @@ class Pictures
                     mysqli_query($this->ObjDBConnection->link, $query);
                 }
                 $picture_id = mysqli_insert_id($this->ObjDBConnection->link);
+                //$this->ObjDBConnection->DBClose();
                 return $picture_id;
             } else {
-
+                //$this->ObjDBConnection->DBClose();
                 return 0;
             }
 
@@ -147,7 +148,7 @@ class Pictures
         $query = "SELECT picture_id FROM Pictures WHERE avatar_id='$avatar_id' AND active='1' AND profile_pic='0'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row['picture_id'];
     }
 
@@ -156,7 +157,7 @@ class Pictures
         $query = "SELECT dateUploaded FROM Pictures WHERE picture_id='$picture_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
+        //$this->ObjDBConnection->DBClose();
         return $row['dateUploaded'];
     }
 
@@ -205,6 +206,7 @@ class Pictures
         unset($_SESSION['imgType']);
         unset($_SESSION['prev_pic_id']);
         unset($_SESSION['cover_pic']);
+        //$this->ObjDBConnection->DBClose();
         header('Location: create_new_avatar_ready.php');
     }
 
@@ -291,6 +293,7 @@ class Pictures
         unset($_SESSION['imgType']);
         unset($_SESSION['prev_pic_id']);
 
+        //$this->ObjDBConnection->DBClose();
         header('Location: edit_avatars.php');
     }
 
@@ -303,7 +306,7 @@ class Pictures
             $picture_ids[$i] = $row['picture_id'];
             $i++;
         }
-
+        //$this->ObjDBConnection->DBClose();
         return $picture_ids;
     }
 

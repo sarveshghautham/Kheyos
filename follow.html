@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="ico/favicon.png">
+
+    <title>Kheyos: One login for the entire WEB.</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/kheyos-style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="primary_page_body">
+<!-- navbar.html -->
+<div class="navbar navbar-static-top navbar-default text-center" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <header style="text-align:center">
+                <div id="header_navbar_logo">
+                </div>
+            </header>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#">
+                        <span class="glyphicon glyphicon-home"></span>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="avatars.html">
+                        <span class="glyphicon glyphicon-user"></span>
+                        Avatars
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="glyphicon glyphicon-comment"></span>
+                        Inbox
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a id="navbar_search" href="#Search">
+                        <span class="glyphicon glyphicon-search"></span>
+                        Search
+                    </a>
+                </li>
+                <li>
+                    <a href="update_cover_page.html" data-toggle="modal" data-target=".update-cover-modal"
+                       data-remote="update_cover_page.html #update_status_page_form">
+                        <span class="glyphicon glyphicon-picture"></span>
+                        <span id="navbar-text-update-cover">Update Cover</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="update_status_page.html" data-toggle="modal" data-target=".update-status-modal"
+                       data-remote="update_status_page.html #update_status_page_form">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        <span id="navbar-text-update-status">Update Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a id="navbar_settings" href="#Settings">
+                        <span class="glyphicon glyphicon-cog"></span>
+                        <span id="navbar-text-settings">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.collapse -->
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /.navbar -->
+<div class="modal fade update-status-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <div class="modal-content text-center">
+            <img src="ico/ajax-loader.gif"/>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<div class="modal fade update-cover-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content text-center">
+            <img src="ico/ajax-loader.gif"/>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- /navbar.html -->
+<div class="container" id="follow_page_form">
+    <div class="row">
+        <div class="col-sm-2 text-center">
+            <a href="javascript:history.back()" class="add_link_gray" data-dismiss="modal" aria-hidden="true">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+            </a>
+            <hr class="fillers_min_768"/>
+        </div>
+        <div class="col-sm-10">
+            <div class="row">
+                <div class="col-sm-6 post_display_block">
+                    <div class="width_35 default_profile_35 add_display_inline_block">
+                        <img src="img/pic.png" class="width_35"/>
+                    </div>
+                    <h4>Mithun Sivagurunathan</h4>
+                    <h5>@mg1390</h5>
+
+                    <p>
+                        Part-time writer | Full-time bum | Small-time filmmaker | All-time scum | Seriously, Film critic
+                        for The Hindu | Three-film young director | Reluctant superhero
+                    </p>
+
+                    <p>
+                        Chennai, India
+                    </p>
+                    <hr class="fillers_min_768"/>
+                </div>
+                <div class="col-sm-6">
+                    <div class="well well-sm col-sm-12">
+                        <h4>Mithun Sivagurunathan</h4>
+                        <h5>Followed with 5 Avatars</h5>
+                    </div>
+                    <div class="col-sm-12 post_display_block">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox">
+                                <img src="img/default.png" class="width_20"/>
+                                Mithun Avatar 1
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox">
+                                <img src="img/default.png" class="width_20"/>
+                                Mithun Avatar 2
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox">
+                                <img src="img/default.png" class="width_20"/>
+                                Mithun Avatar 3
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-right post_display_block">
+                        <button type="button" class="btn btn-default">Deselect All</button>
+                        <button type="button" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <hr>
+    <div class="input-group" id="Search">
+        <input id="Search_Input" type="text" class="form-control" placeholder="@Kheyos_Handle or Full Name">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+				</span>
+    </div>
+    <!-- /input-group -->
+    <br/>
+
+    <div class="btn-group btn-group-justified" id="Settings">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default">Account</button>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default">Help</button>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default">Sign Out</button>
+        </div>
+    </div>
+    <!-- footer_links.html -->
+    <hr>
+    <ul class="footer-default-links muted">
+        <li>&copy; Kheyos 2014</li>
+        <li>&middot;</li>
+        <li><a href="https://github.com/twbs/bootstrap">GitHub</a></li>
+        <li>&middot;</li>
+        <li><a href="../getting-started/#examples">Examples</a></li>
+        <li>&middot;</li>
+        <li><a href="../2.3.2/">v2.3.2 docs</a></li>
+        <li>&middot;</li>
+        <li><a href="../about/">About</a></li>
+        <li>&middot;</li>
+        <li><a href="http://expo.getbootstrap.com">Expo</a></li>
+        <li>&middot;</li>
+        <li><a href="http://blog.getbootstrap.com">Blog</a></li>
+        <li>&middot;</li>
+        <li><a href="https://github.com/twbs/bootstrap/issues?state=open">Issues</a></li>
+        <li>&middot;</li>
+        <li><a href="https://github.com/twbs/bootstrap/releases">Releases</a></li>
+    </ul>
+    <!-- /footer_links.php -->
+</div>
+<!--/.container-->
+<!-- core-javascript.html -->
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type='text/javascript'>
+    function Info_Over(x) {
+        $(x).show();
+    }
+
+    function Info_Out(x) {
+        $(x).hide();
+    }
+
+    $('#navbar_search').click(function () {
+        $('#Search_Input').show().focus();
+    });
+
+    <!-- If logged in -->
+    $('.user_info_popover').popover();
+
+    $('.user_info_popover').click(function (e) {
+        e.stopPropagation();
+    });
+
+    $(document).click(function (e) {
+        if (($('.popover').has(e.target).length == 0) || $(e.target).is('.close')) {
+            $('.user_info_popover').popover('hide');
+        }
+    });
+
+    $(window).resize(function () {
+        $('.user_info_popover').popover('hide');
+    });
+    <!-- /If logged in -->
+</script>
+<!-- /core-javascript.html -->
+</body>
+</html>

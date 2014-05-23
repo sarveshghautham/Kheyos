@@ -30,6 +30,48 @@ class DBConnection
 
     function DBClose()
     {
-        mysqli_close($this->connection);
+        mysqli_close($this->link);
+    }
+
+    function SelectQuery($query)
+    {
+        $result = mysqli_query($this->link, $query);
+        if (!$result) {
+            printf("Error: %s\n", mysqli_error($this->link));
+            exit();
+        }
+        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+        return $row;
+    }
+
+    function InsertQuery($query)
+    {
+        if (mysqli_query($this->link, $query)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function UpdateQuery($query)
+    {
+        $result = mysqli_query($this->link, $query);
+        if ($result) {
+            return true;
+        } else {
+            printf("Error: %s\n", mysqli_error($this->link));
+            //exit();
+            return false;
+        }
+    }
+
+    function DeleteQuery($query)
+    {
+        if (mysqli_query($this->link, $query)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

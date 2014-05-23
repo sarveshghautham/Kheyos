@@ -42,6 +42,9 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
     $statusMonth = date("F", mktime(0, 0, 0, $date[1], 10));
     $monthName = date("F", mktime(0, 0, 0, $pic_date[1], 10));
 
+    $followersCount = $objFollow->MyFollowersCount($avatar_ids[$i]);
+    $followingCount = $objFollow->MyFollowingCount($avatar_ids[$i]);
+
     ?>
 
     <div class="col-sm-8 avatar-summary" id="<?php echo $avatar_info['handle']; ?>">
@@ -55,10 +58,12 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
             </div>
             <div class="col-xs-12 post_display_block">
                 <ul class="nav nav-pills nav-justified">
-                    <li><a href="profile.php?avatar_id=<?php echo $avatar_ids[$i]; ?>" class="text-center">Complete <br
+                    <li><a href="history.php?avatar_id=<?php echo $avatar_ids[$i]; ?>" class="text-center">Complete <br
                                 class="fillers_max_780"/>Profile</a></li>
-                    <li><a href="#" class="text-center">Followers: <br class="fillers_max_780"/>15400</a></li>
-                    <li><a href="#" class="text-center">Following: <br class="fillers_max_780"/>1689</a></li>
+                    <li><a href="followers.php?avatar_id=<?php echo $avatar_ids[$i]; ?>" class="text-center">Followers:
+                            <br class="fillers_max_780"/><?php echo $followersCount; ?></a></li>
+                    <li><a href="followers.php?avatar_id=<?php echo $avatar_ids[$i]; ?>" class="text-center">Following:
+                            <br class="fillers_max_780"/><?php echo $followingCount; ?></a></li>
                     <li><a href="#" class="text-center">Update <br class="fillers_max_780"/>Status</a></li>
                     <li><a href="#" class="text-center">Update <br class="fillers_max_780"/>Cover</a></li>
                     <li><a href="edit_avatars.php?avatar_id=<?php echo $avatar_ids[$i]; ?>" class="text-center">Edit <br

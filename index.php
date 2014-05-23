@@ -119,7 +119,7 @@ if (isset($_POST['btnLogin'])) {
 
                             <div class="form-group">
                                 <input type="email" name="txtEmail" class="form-control" placeholder="Email address"
-                                       autofocus required>
+                                       required>
                                 <span class="help-block with-errors"></span>
                             </div>
                             <div class="form-group">

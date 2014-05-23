@@ -51,12 +51,15 @@ class Users
                     $_SESSION['first_avatar'] = 1;
                     header('Location: create_first_avatar_1.php');
                 } else {
+                    //$this->ObjDBConnection->DBClose();
                     header('Location: home.php');
                 }
             } else {
+                //$this->ObjDBConnection->DBClose();
                 header('Location: login.php');
             }
         } else {
+            //$this->ObjDBConnection->DBClose();
             header('Location: error.php');
         }
     }
@@ -84,16 +87,19 @@ class Users
                 $_SESSION['email'] = $_POST['txtEmail'];
                 if ($this->ConfirmRegistration($_POST['txtEmail'], $_POST['uid'])) {
                     $_SESSION['first_avatar'] = 1;
+                    //$this->ObjDBConnection->DBClose();
                     header('Location: create_first_avatar_1.php');
                 } else {
                     echo "Something wrong";
+                    //$this->ObjDBConnection->DBClose();
                 }
 
             } else {
+                //$this->ObjDBConnection->DBClose();
                 header('Location: login.php');
             }
         } else {
-
+            //$this->ObjDBConnection->DBClose();
             header('Location: error.php');
         }
     }
@@ -128,8 +134,10 @@ class Users
                 //temp session variables
                 $_SESSION['registered'] = 1;
                 $_SESSION['email'] = $_POST['txtEmail'];
+                //$this->ObjDBConnection->DBClose();
                 header('Location: registered.php');
             } else {
+                //$this->ObjDBConnection->DBClose();
                 echo mysqli_error($this->ObjDBConnection->link);
             }
         } else {
@@ -165,6 +173,8 @@ class Users
             unset($_SESSION['registered']);
             unset($_SESSION['email']);
 
+            //$this->ObjDBConnection->DBClose();
+
         } else {
             //TODO: What to do if an error is thrown?
 
@@ -185,8 +195,11 @@ class Users
             $del_query = "DELETE FROM UnverifiedUsers WHERE email='$email'";
             mysqli_query($this->ObjDBConnection->link, $del_query);
 
+            //$this->ObjDBConnection->DBClose();
+
             return true;
         } else {
+            //$this->ObjDBConnection->DBClose();
             return false;
         }
     }
@@ -198,9 +211,19 @@ class Users
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
         if ($row['count_activation_code'] == 0) {
+            //$this->ObjDBConnection->DBClose();
             return false;
         } else {
+            //$this->ObjDBConnection->DBClose();
             return true;
         }
+    }
+
+    function GetName($user_id)
+    {
+        $query = "SELECT name FROM Users WHERE user_id='$user_id'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+        //$this->ObjDBConnection->DBClose();
+        return $row['name'];
     }
 }
