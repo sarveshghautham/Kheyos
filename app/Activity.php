@@ -10,6 +10,7 @@ require_once 'app/Pictures.php';
 require_once 'app/Avatars.php';
 require_once 'app/Status.php';
 require_once 'app/ProcessForm.php';
+require_once 'app/Follow.php';
 
 class Activity
 {
@@ -17,6 +18,7 @@ class Activity
     private $ObjProcessForm;
     private $ObjDBConnection;
     private $ObjPictures;
+    private $ObjFollow;
 
     public function __construct()
     {
@@ -25,52 +27,87 @@ class Activity
         $this->ObjProcessForm = new ProcessForm();
         $this->ObjPictures = new Pictures();
         $this->ObjStatus = new Status();
+        $this->ObjFollow = new Follow();
     }
 
     public function AvatarActivities($avatar_id)
     {
-        $picture_ids = $this->ObjPictures->GetAllCoverPictureIds($avatar_id);
+        $follow_ids = $this->ObjFollow->GetFollowActivityForAvatar($avatar_id);
         $status_ids = $this->ObjStatus->GetAllStatusIds($avatar_id);
 
-        //$result=0;
+        $result = $this->GetActivities($follow_ids, $status_ids);
+        return $result;
+    }
+
+    function GetActivities($follow_ids, $status_ids)
+    {
+        $i = 0;
+        $j = 0;
         $k = 0;
-        for ($i = 0, $j = 0; $i < count($picture_ids) || $j < count($status_ids); $i++, $j++) {
 
+        while (1) {
 
-            if ($picture_ids[$i] != 0 && $status_ids[$i] != 0) {
-                $pic_timestamp = $this->ObjPictures->GetPicTimeStamp($picture_ids[$i]);
-                $status_timestamp = $this->ObjStatus->GetStatusTimeStamp($status_ids[$i]);
+            if (count($follow_ids) == 0 && count($status_ids) == 0) {
+                break;
+            } else if ($follow_ids[$i] != 0 && $status_ids[$j] != 0) {
+                $follow_timestamp = $this->ObjFollow->GetFollowTimeStamp($follow_ids[$i]);
+                $status_timestamp = $this->ObjStatus->GetStatusTimeStamp($status_ids[$j]);
 
-                $ret = $this->CompareTimeStamps($pic_timestamp, $status_timestamp);
+                //echo "Comparing ".$pic_timestamp." with ";
+                //echo $status_timestamp."<br>";
+
+                $ret = $this->CompareTimeStamps($follow_timestamp, $status_timestamp);
+                //echo "Return value: ".$ret."<br>";
+
                 if ($ret == "1" || $ret == "0") {
 
-                    $result[$k]['id'] = $picture_ids[$i];
-                    $result[$k]['type'] = "picture";
+                    $result[$k]['id'] = $follow_ids[$i];
+                    $result[$k]['type'] = 0;
                     $k++;
-                    $result[$k]['id'] = $status_ids[$j];
-                    $result[$k]['type'] = "status";
+                    $i++;
+                    //$result[$k]['id'] = $status_ids[$j];
+                    //$result[$k]['type'] = "status";
                 } else {
                     $result[$k]['id'] = $status_ids[$j];
-                    $result[$k]['type'] = "status";
+                    $result[$k]['type'] = 1;
                     $k++;
-                    $result[$k]['id'] = $picture_ids[$i];
-                    $result[$k]['type'] = "picture";
+                    $j++;
+                    //$result[$k]['id'] = $picture_ids[$i];
+                    //$result[$k]['type'] = "picture";
                 }
-                $k++;
-            } else if ($picture_ids[$i] != 0 && $status_ids[$i] == 0) {
 
-                $result[$k]['id'] = $picture_ids[$i];
-                $result[$k]['type'] = "picture";
+            } else if ($follow_ids[$i] != 0 && $status_ids[$j] == 0) {
+
+                $result[$k]['id'] = $follow_ids[$i];
+                $result[$k]['type'] = 0;
+                $i++;
                 $k++;
             } else {
 
                 $result[$k]['id'] = $status_ids[$j];
-                $result[$k]['type'] = "status";
+                $result[$k]['type'] = 1;
+                $j++;
                 $k++;
+            }
+
+            //echo $i."<br>".$j."<br>".count($picture_ids)."<br>".count($status_ids);
+
+            if (($i == count($follow_ids)) && ($j == count($status_ids))) {
+                break;
             }
 
         }
 
+        return $result;
+    }
+
+    public function AvatarListActivities()
+    {
+        $user_id = $_SESSION['user_id'];
+        $follow_ids = $this->ObjFollow->GetFollowActivity($user_id);
+        $status_ids = $this->ObjStatus->GetAllStatusIdsList($user_id);
+
+        $result = $this->GetActivities($follow_ids, $status_ids);
         return $result;
     }
 
@@ -167,4 +204,67 @@ class Activity
             }
         }
     }
-} 
+}
+
+
+function UnusedGetActivities($picture_ids, $status_ids)
+{
+    $i = 0;
+    $j = 0;
+    $k = 0;
+
+    while (1) {
+
+        if (count($picture_ids) == 0 && count($status_ids) == 0) {
+            break;
+        } else if ($picture_ids[$i] != 0 && $status_ids[$j] != 0) {
+            $pic_timestamp = $this->ObjPictures->GetPicTimeStamp($picture_ids[$i]);
+            $status_timestamp = $this->ObjStatus->GetStatusTimeStamp($status_ids[$j]);
+
+            //echo "Comparing ".$pic_timestamp." with ";
+            //echo $status_timestamp."<br>";
+
+            $ret = $this->CompareTimeStamps($pic_timestamp, $status_timestamp);
+            //echo "Return value: ".$ret."<br>";
+
+            if ($ret == "1" || $ret == "0") {
+
+                $result[$k]['id'] = $picture_ids[$i];
+                $result[$k]['type'] = 0;
+                $k++;
+                $i++;
+                //$result[$k]['id'] = $status_ids[$j];
+                //$result[$k]['type'] = "status";
+            } else {
+                $result[$k]['id'] = $status_ids[$j];
+                $result[$k]['type'] = 1;
+                $k++;
+                $j++;
+                //$result[$k]['id'] = $picture_ids[$i];
+                //$result[$k]['type'] = "picture";
+            }
+
+        } else if ($picture_ids[$i] != 0 && $status_ids[$j] == 0) {
+
+            $result[$k]['id'] = $picture_ids[$i];
+            $result[$k]['type'] = 0;
+            $i++;
+            $k++;
+        } else {
+
+            $result[$k]['id'] = $status_ids[$j];
+            $result[$k]['type'] = 1;
+            $j++;
+            $k++;
+        }
+
+        //echo $i."<br>".$j."<br>".count($picture_ids)."<br>".count($status_ids);
+
+        if (($i == count($picture_ids)) && ($j == count($status_ids))) {
+            break;
+        }
+
+    }
+
+    return $result;
+}

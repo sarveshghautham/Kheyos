@@ -8,7 +8,7 @@
 session_start();
 
 if ($_SESSION['user_id'] == null) {
-    header('Location: index.php');
+    header('Location: login.php');
 } else {
     require_once 'app/Status.php';
 

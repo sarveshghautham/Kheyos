@@ -21,6 +21,31 @@ class Users
         $this->ObjAvatars = new Avatars();
     }
 
+    function AuthVerify()
+    {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        if ($email == null || $password == null) {
+            echo "N";
+        } else if ($this->EmailExists($email)) {
+
+            $query = "SELECT password, salt FROM Users WHERE email='$email'";
+            $row = $this->ObjDBConnection->SelectQuery($query);
+
+            $salt = $row['salt'];
+            $password = crypt($password, '$6$' . $salt);
+
+            if ($password == $row['password'] && $password != null && $row != null) {
+                echo "Y";
+            } else {
+                echo "N";
+            }
+        } else {
+            echo "X";
+        }
+    }
+
     function login($form)
     {
 
@@ -28,35 +53,41 @@ class Users
 
         if ($this->ObjProcessForm->FormPOST($form, 'btnLogin', $whiteList)) {
 
-            $query = "SELECT user_id, salt, password, active FROM Users WHERE email='$_POST[txtEmail]'";
-            $result = mysqli_query($this->ObjDBConnection->link, $query);
-            $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+            $email = $_POST['txtEmail'];
+            if (!$this->EmailExists($email)) {
+                header('Location: login.php');
+            } else {
 
-            //$options['cost'] = 11;
-            //$options['salt'] = $row['salt'];
-            //$password = password_hash($_POST['txtPassword'], PASSWORD_BCRYPT, $options);
+                $query = "SELECT user_id, salt, password, active FROM Users WHERE email='$email'";
+                $result = mysqli_query($this->ObjDBConnection->link, $query);
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
-            $salt = $row['salt'];
-            $password = crypt($_POST['txtPassword'], '$6$' . $salt);
+                //$options['cost'] = 11;
+                //$options['salt'] = $row['salt'];
+                //$password = password_hash($_POST['txtPassword'], PASSWORD_BCRYPT, $options);
 
-            if ($row['active'] == 0) {
-                header('Location: error.php');
-            } else if ($password == $row['password'] && $password != null && $row != null) {
-                $_SESSION['user_id'] = $row['user_id'];
-                $_SESSION['email'] = $_POST['txtEmail'];
+                $salt = $row['salt'];
+                $password = crypt($_POST['txtPassword'], '$6$' . $salt);
 
-                $CountAvatar = $this->ObjAvatars->FirstAvatarCreatedCheck($row['user_id']);
+                if ($row['active'] == 0) {
+                    header('Location: error.php');
+                } else if ($password == $row['password'] && $password != null && $row != null) {
+                    $_SESSION['user_id'] = $row['user_id'];
+                    $_SESSION['email'] = $_POST['txtEmail'];
 
-                if ($CountAvatar == 0) {
-                    $_SESSION['first_avatar'] = 1;
-                    header('Location: create_first_avatar_1.php');
+                    $CountAvatar = $this->ObjAvatars->FirstAvatarCreatedCheck($row['user_id']);
+
+                    if ($CountAvatar == 0) {
+                        $_SESSION['first_avatar'] = 1;
+                        header('Location: create_first_avatar.php');
+                    } else {
+                        //$this->ObjDBConnection->DBClose();
+                        header('Location: home.php');
+                    }
                 } else {
                     //$this->ObjDBConnection->DBClose();
-                    header('Location: home.php');
+                    header('Location: login.php');
                 }
-            } else {
-                //$this->ObjDBConnection->DBClose();
-                header('Location: login.php');
             }
         } else {
             //$this->ObjDBConnection->DBClose();
@@ -88,7 +119,7 @@ class Users
                 if ($this->ConfirmRegistration($_POST['txtEmail'], $_POST['uid'])) {
                     $_SESSION['first_avatar'] = 1;
                     //$this->ObjDBConnection->DBClose();
-                    header('Location: create_first_avatar_1.php');
+                    header('Location: create_first_avatar.php');
                 } else {
                     echo "Something wrong";
                     //$this->ObjDBConnection->DBClose();
@@ -108,7 +139,6 @@ class Users
     {
 
         $whiteList = array('token',
-            'txtName',
             'txtEmail',
             'txtPassword',
             'txtRePassword',
@@ -128,7 +158,7 @@ class Users
             //$salt = $options['salt'];
 
             //Input is free from hacks. Now insert into DB.
-            $query = "INSERT INTO Users VALUES (DEFAULT, '$_POST[txtEmail]', '$password', '$_POST[txtName]', '$salt', NOW(), NOW(), NOW(), '0')";
+            $query = "INSERT INTO Users VALUES (DEFAULT, '$_POST[txtEmail]', '$password', '$salt', NOW(), NOW(), NOW(), '0')";
 
             if (mysqli_query($this->ObjDBConnection->link, $query)) {
                 //temp session variables
@@ -156,7 +186,7 @@ class Users
         if (mysqli_query($this->ObjDBConnection->link, $query)) {
 
             $message = "Click on the link to activate your account \n\n";
-            $message .= "http://www.kheyos.com/Kheyos/login_confirmation.php?email=" . $_SESSION['email'] . "&uid=" . $activation;
+            $message .= "http://www.kheyos.com/login_confirmation.php?email=" . $_SESSION['email'] . "&uid=" . $activation;
             $message .= "\n\nRegards, \n";
             $message .= "Kheyos Team";
 
@@ -219,11 +249,100 @@ class Users
         }
     }
 
-    function GetName($user_id)
+    function ResetCode()
     {
-        $query = "SELECT name FROM Users WHERE user_id='$user_id'";
+
+        $email = $_POST['email'];
+        if ($email == null) {
+            echo "N";
+        } else {
+
+            if ($this->EmailExists($email) == false) {
+                echo "N";
+            } else {
+
+                $code = md5(uniqid(rand(), true));
+
+                $query = "INSERT INTO ResetPasswordUsers VALUES ('$email', '$code', NOW())";
+                $this->ObjDBConnection->InsertQuery($query);
+
+                $message = "Copy this code " . $code . " and paste it in the code text box \n\n";
+                $message .= "\n\nRegards, \n";
+                $message .= "Kheyos Team";
+
+                //Send a mail with a code. User has to verify.
+                $to = $email;
+
+                $headers = 'From: Kheyos@kheyos.com' . "\r\n" .
+                    'X-Mailer: PHP/' . phpversion();
+
+                //Send mail using PHP mail function. Replace it later with SMTP.
+                mail($to, 'Reset your password', $message, $headers);
+
+                echo "Y";
+            }
+        }
+
+    }
+
+    function EmailExists($email)
+    {
+        $query = "SELECT COUNT(*) AS EntryCount FROM Users WHERE email='$email'";
         $row = $this->ObjDBConnection->SelectQuery($query);
-        //$this->ObjDBConnection->DBClose();
-        return $row['name'];
+
+        if ($row['EntryCount'] == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function CodeVerify()
+    {
+
+        $email = $_POST['email'];
+        $code = $_POST['code'];
+
+        if ($code == null || $email == null) {
+            echo "N";
+        } else {
+            $query = "SELECT reset_code FROM ResetPasswordUsers WHERE email='$email'";
+            $row = $this->ObjDBConnection->SelectQuery($query);
+
+            if ($row['reset_code'] == $code) {
+                echo "Y";
+            } else {
+                echo "N";
+            }
+        }
+
+    }
+
+    function UpdatePassword()
+    {
+
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $repassword = $_POST['repassword'];
+
+        if ($password != $repassword || $password == null || $email == null || $repassword == null) {
+            echo "N";
+        } else {
+
+            $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
+            $password = addslashes(crypt($password, '$6$' . $salt));
+
+            $query = "UPDATE Users SET password = '$password', salt = '$salt' WHERE email='$email'";
+            if ($this->ObjDBConnection->UpdateQuery($query)) {
+                $del_query = "DELETE FROM ResetPasswordUsers WHERE email='$email'";
+                if ($this->ObjDBConnection->DeleteQuery($del_query)) {
+                    echo "Y";
+                } else {
+                    echo "N";
+                }
+            } else {
+                echo "N";
+            }
+        }
     }
 }

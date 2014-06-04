@@ -8,6 +8,9 @@
 
 $pageName = $_SERVER['REQUEST_URI'];
 
+//$pageName = $_SERVER['REQUEST_URI'];
+$page = explode('/', $pageName);
+
 ?>
 
 <!-- navbar.html -->
@@ -30,13 +33,13 @@ $pageName = $_SERVER['REQUEST_URI'];
                 <li class="
                     <?php
 
-                if ($pageName == '/Kheyos/home.php') {
+                if ($page[1] == 'home.php') {
                     echo "active";
                 }
 
                 ?>
                     ">
-                    <a href="home.php">
+                    <a href="/home.php">
                         <span class="glyphicon glyphicon-home"></span>
                         Home
                     </a>
@@ -44,41 +47,27 @@ $pageName = $_SERVER['REQUEST_URI'];
                 <li class="
                     <?php
 
-                if ($pageName == '/Kheyos/my_avatars.php') {
+                if ($page[1] == 'my_avatars.php' || $page[1] == 'my_avatars') {
                     echo "active";
                 }
 
                 ?>
                     ">
-                    <a href="my_avatars.php">
+                    <a href="/my_avatars.php">
                         <span class="glyphicon glyphicon-user"></span>
                         Avatars
                     </a>
                 </li>
-                <li>
-                    <a href="#">
-                        <span class="glyphicon glyphicon-comment"></span>
-                        Inbox
-                    </a>
-                </li>
+                <!--                <li>-->
+                <!--                    <a href="#">-->
+                <!--                        <span class="glyphicon glyphicon-comment"></span>-->
+                <!--                        Inbox-->
+                <!--                    </a>-->
+                <!--                </li>-->
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right fillers_min_768">
                 <li>
-                    <a id="navbar_search" href="#Search">
-                        <span class="glyphicon glyphicon-search"></span>
-                        Search
-                    </a>
-                </li>
-                <li>
-                    <a href="update_cover_page.php" data-toggle="modal" data-target=".update-cover-modal"
-                       data-remote="update_cover_page.php #update_status_page_form">
-                        <span class="glyphicon glyphicon-picture"></span>
-                        <span id="navbar-text-update-cover">Update Cover</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="update_status_page.php" data-toggle="modal" data-target=".update-status-modal"
-                       data-remote="update_status_page.php #update_status_page_form">
+                    <a href="update_status_page.php">
                         <span class="glyphicon glyphicon-edit"></span>
                         <span id="navbar-text-update-status">Update Status</span>
                     </a>
@@ -86,8 +75,29 @@ $pageName = $_SERVER['REQUEST_URI'];
                 <li>
                     <a id="navbar_settings" href="#Settings">
                         <span class="glyphicon glyphicon-cog"></span>
-                        <span id="navbar-text-settings">Settings</span>
+                        <span id="navbar-text-settings" data-toggle="collapse"
+                              data-target=".navbar-collapse">Settings</span>
                     </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right fillers_max_768">
+                <li>
+                    <a href="update_status_page.php">
+                        <span class="glyphicon glyphicon-edit"></span>
+                        <span id="navbar-text-update-status">Update Status</span>
+                    </a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-cog"></span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu text-left">
+                        <li><a href="#">Account Settings</a></li>
+                        <li><a href="#">Help</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/logout.php">Sign Out</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -95,23 +105,5 @@ $pageName = $_SERVER['REQUEST_URI'];
     </div>
     <!-- /.container -->
 </div><!-- /.navbar -->
-<div class="modal fade update-status-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <div class="modal-content text-center">
-            <img src="ico/ajax-loader.gif"/>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<div class="modal fade update-cover-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content text-center">
-            <img src="ico/ajax-loader.gif"/>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div><!-- /.modal -
-		<!-- /navbar.html -->
+<!-- /navbar.html -->
+		

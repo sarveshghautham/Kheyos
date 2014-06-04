@@ -1,3 +1,13 @@
+<?php
+
+session_start();
+
+if ($_SESSION['user_id'] == null) {
+    header('Location: login.php');
+} else {
+
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,201 +18,196 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="ico/favicon.png">
 
-    <title>Kheyos: One login for the entire WEB.</title>
+    <title>Kheyos: Home.</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="css/kheyos-style.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="css/vendor/jquery.simplecolorpicker.css">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+
+
 </head>
 
 <body class="primary_page_body">
 <?php
 require_once 'navbar.php';
 ?>
+
 <div class="container">
-    <div class="row post_display_block">
-        <div class="col-sm-4 text-right post_owner_block">
-            <div
-                class="user_info_popover add_link_blue"
-                data-container="body"
-                data-trigger="click"
-                data-toggle="popover"
-                data-placement="bottom"
-                data-html="true"
-                data-title=
-                "
-							<a>
-								@sarvghau
-							</a> 
-							<a class='pull-right'>
-								<span class='glyphicon glyphicon-comment'></span>
-							</a>
-						"
-                data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
-                >
-                <div class="width_30 default_profile_30 add_display_inline_block">
-                    <img src="" class="width_30"/>
-                </div>
-                <br/>
-                Sarghau
-            </div>
-            <div class="btn-group">
-                <div class="btn btn-default btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm">
-                    Followed By
-                </div>
-            </div>
-            <!-- /btn-group -->
-        </div>
-        <div class="col-sm-8">
-            <a href="#">10:50 AM - 9 March 2014</a>
-            <br/>
-            My article, "Who is #Thegidi's Vallaba?" comes tomorrow @behindwoods. Till then, give your speculations..
-            @AshokSelvan @jan_iyer @vijayvyoma @AshokSelvan @jan_iyer @vijayvyoma
-            <br/>
-            <a href="#">Like</a>
-            &middot;
-            <a href="#">Comment</a>
-        </div>
-    </div>
-    <div class="row post_display_block">
-        <div class="col-sm-4 text-right post_owner_block">
-            <div
-                class="user_info_popover add_link_blue"
-                data-container="body"
-                data-trigger="click"
-                data-toggle="popover"
-                data-placement="bottom"
-                data-html="true"
-                data-title=
-                "
-							<a>
-								@sarvii
-							</a> 
-							<a class='pull-right'>
-								<span class='glyphicon glyphicon-comment'></span>
-							</a>
-						"
-                data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
-                >
-                <div class="width_30 default_profile_30 add_display_inline_block">
-                    <img src="" class="width_30"/>
-                </div>
-                <br/>
-                Sargy
-            </div>
-            <div class="btn-group">
-                <div class="btn btn-default btn-sm" data-toggle="modal" data-target=".bs-example-modal-sm">
-                    Followed By
-                </div>
-            </div>
-            <!-- /btn-group -->
-        </div>
-        <div class="col-sm-8">
-            <a>10:50 AM - 9 March 2014</a>
 
-            <div class="item">
-                <img src="img/cover-photo0.jpg" alt="Chennai, India" class="width_100pc">
+    <div class="row">
+        <div id="home-feed" class="col-sm-7">
 
-                <div class="carousel-caption">
-                    <p class="text-right">
-                        <span class="carousel_img_location">Chennai, India</span>
-                    </p>
+            <?php require_once 'home_feed.php'; ?>
+        </div>
+        <!-- col-sm-7 -->
+
+        <div class="col-sm-5 post_owner_block">
+            <div class="panel panel-default fillers_max_768">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-edit"></span>
+                    Update Status
+                </div>
+                <div class="panel-body add_background_none">
+
+                    <form enctype="multipart/form-data" data-toggle="validator" role="form" class="text-left"
+                          name="FormUpdateStatus" id="FormUpdateStatus" method="POST" action="confirm_status.php">
+
+                        <input type="hidden" name="token" value="<?php echo $token; ?>">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <textarea name="txtStatus" class="form-control" rows="5"
+                                              placeholder="What's going on?" maxLength="145" required></textarea>
+                                    <br/>
+                                </div>
+                                <div class="form-group">
+                                    <span class="add_color_gray">Choose the background:</span><br/>
+                                    <select name="selBgColor" class="colorpicker-longlist" required>
+                                        <option value="#FFFFFF">White</option>
+                                        <option value="#000000">Black</option>
+                                        <option value="#FF0000">Red</option>
+                                        <option value="#FB9902">Orange</option>
+                                        <option value="#FFFF00">Yellow</option>
+                                        <option value="#d0ea2b">Light Green</option>
+                                        <option value="#66b032">Dark Green</option>
+                                        <option value="#0391ce">Light Blue</option>
+                                        <option value="#0247fe">Navy Blue</option>
+                                        <option value="#3d01a4">Dark Blue</option>
+                                        <option value="#990099">Violet</option>
+                                        <option value="#990033">Purple</option>
+                                    </select>
+                                    <br/>
+                                    <span class="add_color_gray">Or - Select an image (Image should be larger than 900x500)</span>
+                                    <br/>
+                                    <input type="file" id="Status_Update_Input_File" name="statusPic">
+                                    <br/>
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="add_color_gray">Choose the font color:</span><br/>
+                                    <select name="selFontColor" class="colorpicker-longlist" required>
+                                        <option value="#000000">Black</option>
+                                        <option value="#ffffff">White</option>
+                                    </select>
+                                    <br/>
+                                    <br/>
+                                </div>
+                                <div class="form-group">
+                                    <span class="add_color_gray">Post the status with:</span><br/>
+
+                                    <?php
+                                    for ($i = 0; $i < count($avatar_list); $i++) {
+                                        $avatar_info = $objAvatar->GetAvatarInfo($avatar_list[$i]);
+                                        $picture_id = $objPictures->GetProfilePictureId($avatar_list[$i]);
+                                        ?>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="radioAvatars"
+                                                       value="<?php echo $avatar_list[$i]; ?> " required>
+
+                                                <div
+                                                    class="imgLiquidFill imgLiquid default_profile_20 add_display_inline_block">
+
+                                                    <?php
+                                                    if ($picture_id == "") {
+
+                                                        ?>
+
+                                                        <img alt="Woody" src="img/pic.png"/>
+                                                    <?php
+                                                    } else {
+                                                        ?>
+                                                        <img alt="<?php echo "@" . $avatar_info['handle']; ?>"
+                                                             src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </div>
+                                                <?php echo $avatar_info['name']; ?>
+                                            </label>
+                                        </div>
+                                    <?php
+                                    }
+                                    ?>
+
+                                </div>
+                                <div class="text-right">
+                                    <button class="btn btn-primary" name="btnUpdate" id="btnUpdate" type="submit">Update
+                                        Status
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <a href="#">Like</a>
-            &middot;
-            <a href="#">Comment</a>
         </div>
-    </div>
-    <hr>
-    <div class="input-group" id="Search">
-        <input id="Search_Input" type="text" class="form-control" placeholder="@Kheyos_Handle or Full Name">
-				<span class="input-group-btn">
-					<button class="btn btn-default" type="button">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-				</span>
-    </div>
-    <!-- /input-group -->
-    <br/>
 
-    <div class="btn-group btn-group-justified" id="Settings">
-        <div class="btn-group">
-            <button type="button" class="btn btn-default">Account</button>
-        </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-default">Help</button>
-        </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-default">Sign Out</button>
-        </div>
     </div>
-    <!-- footer_links.html -->
-    <hr>
-    <ul class="footer-default-links muted">
-        <li>&copy; Kheyos 2014</li>
-        <li>&middot;</li>
-        <li><a href="https://github.com/twbs/bootstrap">GitHub</a></li>
-        <li>&middot;</li>
-        <li><a href="../getting-started/#examples">Examples</a></li>
-        <li>&middot;</li>
-        <li><a href="../2.3.2/">v2.3.2 docs</a></li>
-        <li>&middot;</li>
-        <li><a href="../about/">About</a></li>
-        <li>&middot;</li>
-        <li><a href="http://expo.getbootstrap.com">Expo</a></li>
-        <li>&middot;</li>
-        <li><a href="http://blog.getbootstrap.com">Blog</a></li>
-        <li>&middot;</li>
-        <li><a href="https://github.com/twbs/bootstrap/issues?state=open">Issues</a></li>
-        <li>&middot;</li>
-        <li><a href="https://github.com/twbs/bootstrap/releases">Releases</a></li>
-    </ul>
-    <!-- /footer_links.php -->
+    <!-- row -->
+
+    <div class="fillers_min_768">
+        <hr>
+        <?php
+        require_once 'settings_bar.php';
+        ?>
+    </div>
+    <?php
+    require_once 'footer.php';
+    ?>
 </div>
 <!--/.container-->
-<!-- core-javascript.html -->
-<script src="js/jquery.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script type='text/javascript'>
-    function Info_Over(x) {
-        $(x).show();
-    }
 
-    function Info_Out(x) {
-        $(x).hide();
-    }
+<?php
+require_once 'core-javascript.php';
+?>
 
-    $('#navbar_search').click(function () {
-        $('#Search_Input').show().focus();
+<script>
+
+    $(document).ready(function () {
+
+        $('#btnUpdate').click(function (event) {
+
+            event.preventDefault();
+            var form = $('#FormUpdateStatus').serializeArray();
+
+            $.ajax({
+                type: "POST",
+                url: "confirm_status.php",
+
+                data: form,
+                cache: false,
+                success: function (data, textStatus, jqXHR) {
+                    $('#home-feed').fadeOut(800, function () {
+                        //$('#home-feed').fadeIn().delay(2000);
+                        //$('#home-feed').load('home_feed.php');
+                        window.location.reload();
+                        $('#FormUpdateStatus')[0].reset();
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("Failed");
+                }
+
+            });
+
+        });
+
     });
-
-    <!-- If logged in -->
-    $('.user_info_popover').popover();
-
-    $('.user_info_popover').click(function (e) {
-        e.stopPropagation();
-    });
-
-    $(document).click(function (e) {
-        if (($('.popover').has(e.target).length == 0) || $(e.target).is('.close')) {
-            $('.user_info_popover').popover('hide');
-        }
-    });
-
-    $(window).resize(function () {
-        $('.user_info_popover').popover('hide');
-    });
-    <!-- /If logged in -->
 </script>
-<!-- /core-javascript.html -->
+
 </body>
+
 </html>

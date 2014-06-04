@@ -808,7 +808,6 @@
       <column name="follow_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
       <column name="avatar_id_1" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
       <column name="avatar_id_2" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="mutual" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6"/>
       <column name="time" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
       <primary-key name="PRIMARY" columns="follow_id"/>
     </table>
@@ -821,6 +820,12 @@
       <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6"/>
       <column name="dateUploaded" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
       <primary-key name="PRIMARY" columns="picture_id"/>
+    </table>
+    <table name="ResetPasswordUsers" schema="" catalog="kheyosco_kheyos" type="TABLE">
+      <column name="email" sqlType="VARCHAR" length="80" precision="0" nullable="false" jdbcType="12"/>
+      <column name="reset_code" sqlType="VARCHAR" length="80" precision="0" nullable="false" jdbcType="12"/>
+      <column name="time" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
+      <primary-key name="PRIMARY" columns="email"/>
     </table>
     <table name="Status" schema="" catalog="kheyosco_kheyos" type="TABLE">
       <column name="status_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>

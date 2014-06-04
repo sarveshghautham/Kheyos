@@ -1,8 +1,8 @@
 <?php
 
 session_start();
-if ($_SESSION['user_id'] == null) {
-    header('Location: index.php');
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
 }
 
 require_once 'app/Avatars.php';
@@ -17,15 +17,19 @@ $objFollow = new Follow();
 
 $avatar_ids = $objAvatars->AvatarList($_SESSION['user_id']);
 
-if ($_SESSION['avatar_id'] != null) {
-    $avatar_id = $_SESSION['avatar_id'];
+
+if ($_GET['handle'] != null) {
+    $handle = $_GET['handle'];
+    $avatar_id = $objAvatars->GetAvatarIdFromHandle($handle);
     $temp_avatar_id = $avatar_id;
+
 } else {
     $avatar_id = 0;
     $temp_avatar_id = $avatar_ids[0];
+    $handle = $objAvatars->GetHandle($temp_avatar_id);
 }
+//echo $_SESSION['avatar_id'];
 
-$handle = $objAvatars->GetHandle($temp_avatar_id);
 
 ?>
 
@@ -42,11 +46,13 @@ $handle = $objAvatars->GetHandle($temp_avatar_id);
     <title>Kheyos: One login for the entire WEB.</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/kheyos-style.css" rel="stylesheet">
+    <link href="/css/kheyos-style.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
 
+    <link rel="stylesheet" href="css/vendor/jquery.simplecolorpicker.css">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -91,74 +97,20 @@ require_once 'navbar.php';
         <?php
         require_once 'avatar_summary.php';
         ?>
-
-        <hr/>
-        <div class="input-group" id="Search">
-            <input id="Search_Input" type="text" class="form-control" placeholder="@Kheyos_Handle or Full Name">
-				<span class="input-group-btn">
-					<button class="btn btn-default" type="button">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-				</span>
-        </div>
-        <!-- /input-group -->
-        <br/>
-
-        <div class="btn-group btn-group-justified" id="Settings">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default">Account</button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-default">Help</button>
-            </div>
-            <div class="btn-group">
-                <form action="logout.php" method="POST">
-                    <button type="submit" class="btn btn-default">Sign Out</button>
-                </form>
-
-            </div>
-        </div>
+    </div>
+    <div class="fillers_min_768">
+        <hr>
         <?php
-
-        require_once 'footer.php';
-
+        require_once 'settings_bar.php';
         ?>
     </div>
-    <!--/.container-->
-    <!-- core-javascript.html -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script type='text/javascript'>
-        function Info_Over(x) {
-            $(x).show();
-        }
-
-        function Info_Out(x) {
-            $(x).hide();
-        }
-
-        $('#navbar_search').click(function () {
-            $('#Search_Input').show().focus();
-        });
-
-        <!-- If logged in -->
-        $('.user_info_popover').popover();
-
-        $('.user_info_popover').click(function (e) {
-            e.stopPropagation();
-        });
-
-        $(document).click(function (e) {
-            if (($('.popover').has(e.target).length == 0) || $(e.target).is('.close')) {
-                $('.user_info_popover').popover('hide');
-            }
-        });
-
-        $(window).resize(function () {
-            $('.user_info_popover').popover('hide');
-        });
-        <!-- /If logged in -->
-    </script>
-    <!-- /core-javascript.html -->
+    <?php
+    require_once 'footer.php';
+    ?>
+</div>
+<!--/.container-->
+<?php
+require_once 'core-javascript.php';
+?>
 </body>
 </html>

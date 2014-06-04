@@ -7,7 +7,6 @@
  */
 
 session_start();
-define ('SITE_ROOT', realpath(dirname(__FILE__)));
 
 require_once 'ProcessForm.php';
 require_once 'DBConnection.php';
@@ -47,6 +46,8 @@ class Pictures
             $_SESSION['imgType'] = $extension;
 
             move_uploaded_file($tmpName, $path);
+
+            $this->CropProfilePicture($newName, $path);
 
             $type = $_FILES['profPicture']['type'];
 
@@ -89,57 +90,50 @@ class Pictures
         return $row['picture_id'];
     }
 
-    public function UploadCoverPicture($form)
+    public function UploadStatusPicture()
     {
-        $whiteList = array('token',
-            'coverPicture',
-            'chkAvatars',
-            'btnUpload'
-        );
+        if (isset($_FILES['statusPic']) && $_FILES['statusPic']['size'] > 0 &&
+            preg_match('/png|x-png|jpeg/', $_FILES['statusPic']['type'])
+        ) {
 
-        if ($this->ObjProcessForm->FormPOST($form, 'btnUpload', $whiteList)) {
+            $type = $_FILES['statusPic']['type'];
+            $extension = explode("/", $type);
+            $extension = end($extension);
 
-            if (isset($_FILES['coverPicture']) && $_FILES['coverPicture']['size'] > 0 &&
-                preg_match('/png|x-png|jpeg/', $_FILES['coverPicture']['type'])
-            ) {
+            // Temporary file name stored on the server
+            $tmpName = $_FILES['statusPic']['tmp_name'];
+            $newName = sha1($tmpName) . "." . $extension;
+            $path = "/home/kheyosco/images/" . $newName;
+            $avatar_id = $_SESSION['avatar_id'];
 
-                $type = $_FILES['coverPicture']['type'];
-                $extension = explode("/", $type);
-                $extension = end($extension);
+            $_SESSION['newName'] = $newName;
+            $_SESSION['path'] = $path;
+            $_SESSION['imgType'] = $extension;
 
-                // Temporary file name stored on the server
-                $tmpName = $_FILES['coverPicture']['tmp_name'];
-                $newName = sha1($tmpName) . "." . $extension;
-                $path = "/home/kheyosco/images/" . $newName;
-                $avatar_id = $_SESSION['avatar_id'];
+            move_uploaded_file($tmpName, $path);
 
-                $_SESSION['newName'] = $newName;
-                $_SESSION['path'] = $path;
-                $_SESSION['imgType'] = $extension;
+            $type = $_FILES['statusPic']['type'];
+            $_SESSION['prev_pic_id'] = $this->GetCoverPictureId($avatar_id);
 
-                move_uploaded_file($tmpName, $path);
+            $avatar_id = $_POST['radioAvatars'];
+            //for ($i = 0; $i < count($avatar_ids); $i++) {
+            $prev_pic_id = $this->GetCoverPictureId($avatar_id);
+            $disable_old_pic = "UPDATE Pictures SET active='0' WHERE picture_id='$prev_pic_id' AND profile_pic='0'";
+            mysqli_query($this->ObjDBConnection->link, $disable_old_pic);
 
-                $type = $_FILES['coverPicture']['type'];
-                $_SESSION['prev_pic_id'] = $this->GetCoverPictureId($avatar_id);
-
-                $avatar_ids = $_POST['chkAvatars'];
-                for ($i = 0; $i < count($avatar_ids); $i++) {
-                    $prev_pic_id = $this->GetCoverPictureId($avatar_ids[$i]);
-                    $disable_old_pic = "UPDATE Pictures SET active='0' WHERE picture_id='$prev_pic_id' AND profile_pic='0'";
-                    mysqli_query($this->ObjDBConnection->link, $disable_old_pic);
-
-                    $query = "INSERT INTO Pictures VALUES (DEFAULT, '$avatar_ids[$i]', '$type', '$path', '0', '1', NOW())";
-                    mysqli_query($this->ObjDBConnection->link, $query);
-                }
-                $picture_id = mysqli_insert_id($this->ObjDBConnection->link);
-                //$this->ObjDBConnection->DBClose();
-                return $picture_id;
-            } else {
-                //$this->ObjDBConnection->DBClose();
-                return 0;
-            }
-
+            $query = "INSERT INTO Pictures VALUES (DEFAULT, '$avatar_id', '$type', '$path', '0', '1', NOW())";
+            //echo $query;
+            mysqli_query($this->ObjDBConnection->link, $query);
+            //}
+            $picture_id = mysqli_insert_id($this->ObjDBConnection->link);
+            //$this->ObjDBConnection->DBClose();
+            return $picture_id;
+        } else {
+            //$this->ObjDBConnection->DBClose();
+            return 0;
         }
+
+
     }
 
     function GetCoverPictureId($avatar_id)
@@ -158,6 +152,7 @@ class Pictures
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
         //$this->ObjDBConnection->DBClose();
+
         return $row['dateUploaded'];
     }
 
@@ -207,7 +202,37 @@ class Pictures
         unset($_SESSION['prev_pic_id']);
         unset($_SESSION['cover_pic']);
         //$this->ObjDBConnection->DBClose();
-        header('Location: create_new_avatar_ready.php');
+        header('Location: avatar_ready.php');
+    }
+
+    function CropProfilePicture($newName, $path)
+    {
+
+        $tmpPath = 'tmp/' . $newName;
+        rename($path, $tmpPath);
+
+        list($img_width, $img_height) = getimagesize($tmpPath);
+
+        if ($img_width > $img_height) {
+            $new_height = 250;
+            $new_width = ($img_width * 250) / $img_height;
+        } else if ($img_width < $img_height) {
+            $new_width = 250;
+            $new_height = ($img_height * 250) / $img_width;
+        } else {
+            $new_height = 250;
+            $new_width = 250;
+        }
+
+
+        $thumb = new Imagick($tmpPath);
+
+        $thumb->resizeImage($new_width, $new_height, Imagick::FILTER_LANCZOS, 1);
+        $thumb->writeImage($tmpPath);
+        $thumb->destroy();
+
+        rename($tmpPath, $path);
+
     }
 
     function AutoCropImage($width, $height, $path, $newName, $type)
@@ -309,5 +334,117 @@ class Pictures
         //$this->ObjDBConnection->DBClose();
         return $picture_ids;
     }
+
+    function GetAllCoverPictureIdsList($user_id)
+    {
+
+        $i = 0;
+
+        $query = "SELECT DISTINCT picture_id, MAX(dateUploaded) AS temp FROM Pictures
+                  WHERE avatar_id IN
+                  (SELECT DISTINCT avatar_id_2 FROM Follow
+                  WHERE avatar_id_1 IN
+                  (SELECT DISTINCT avatar_id FROM Avatars
+                  WHERE user_id = '$user_id')) AND profile_pic='0' AND active='1'
+                  GROUP BY avatar_id
+                  ORDER BY temp DESC";
+
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            $picture_ids[$i] = $row['picture_id'];
+            $i++;
+        }
+
+        //$this->ObjDBConnection->DBClose();
+        return $picture_ids;
+    }
+
+    function GetAvatarId($picture_id)
+    {
+        $query = "SELECT avatar_id FROM Pictures WHERE picture_id = '$picture_id'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+
+        return $row['avatar_id'];
+    }
+
+    function CheckPictureAccess($user_id, $picture_id)
+    {
+
+        $query = "SELECT picture_id FROM Pictures
+                  WHERE (avatar_id IN
+                  (SELECT avatar_id FROM Avatars
+                  WHERE user_id = '$user_id')) OR
+                  (SELECT avatar_id_2 FROM Follow
+                  WHERE avatar_id_1 IN
+                  (SELECT avatar_id FROM Avatars
+                  WHERE user_id = '$user_id'))";
+
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+
+            if ($row['picture_id'] == $picture_id) {
+                //$this->ObjDBConnection->DBClose();
+                return true;
+            }
+        }
+
+        //$this->ObjDBConnection->DBClose();
+        return false;
+
+    }
+
+    public function UnusedUploadCoverPicture($form)
+    {
+        $whiteList = array('token',
+            'coverPicture',
+            'chkAvatars',
+            'btnUpload'
+        );
+
+        if ($this->ObjProcessForm->FormPOST($form, 'btnUpload', $whiteList)) {
+
+            if (isset($_FILES['coverPicture']) && $_FILES['coverPicture']['size'] > 0 &&
+                preg_match('/png|x-png|jpeg/', $_FILES['coverPicture']['type'])
+            ) {
+
+                $type = $_FILES['coverPicture']['type'];
+                $extension = explode("/", $type);
+                $extension = end($extension);
+
+                // Temporary file name stored on the server
+                $tmpName = $_FILES['coverPicture']['tmp_name'];
+                $newName = sha1($tmpName) . "." . $extension;
+                $path = "/home/kheyosco/images/" . $newName;
+                $avatar_id = $_SESSION['avatar_id'];
+
+                $_SESSION['newName'] = $newName;
+                $_SESSION['path'] = $path;
+                $_SESSION['imgType'] = $extension;
+
+                move_uploaded_file($tmpName, $path);
+
+                $type = $_FILES['coverPicture']['type'];
+                $_SESSION['prev_pic_id'] = $this->GetCoverPictureId($avatar_id);
+
+                $avatar_ids = $_POST['chkAvatars'];
+                for ($i = 0; $i < count($avatar_ids); $i++) {
+                    $prev_pic_id = $this->GetCoverPictureId($avatar_ids[$i]);
+                    $disable_old_pic = "UPDATE Pictures SET active='0' WHERE picture_id='$prev_pic_id' AND profile_pic='0'";
+                    mysqli_query($this->ObjDBConnection->link, $disable_old_pic);
+
+                    $query = "INSERT INTO Pictures VALUES (DEFAULT, '$avatar_ids[$i]', '$type', '$path', '0', '1', NOW())";
+                    mysqli_query($this->ObjDBConnection->link, $query);
+                }
+                $picture_id = mysqli_insert_id($this->ObjDBConnection->link);
+                //$this->ObjDBConnection->DBClose();
+                return $picture_id;
+            } else {
+                //$this->ObjDBConnection->DBClose();
+                return 0;
+            }
+
+        }
+    }
+
 
 }

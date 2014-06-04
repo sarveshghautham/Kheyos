@@ -6,22 +6,25 @@ if (!isset ($_SESSION['user_id'])) {
     header('Location: login.php');
 }
 
-require_once 'app/Users.php';
 require_once 'app/ProcessForm.php';
 require_once 'app/Avatars.php';
+require_once 'app/Pictures.php';
+
+$objPictures = new Pictures();
+$objAvatars = new Avatars();
 
 if ($_POST != null) {
 
-    $_SESSION['first_avatar'] = 1;
-    $objAvatars = new Avatars();
     $objAvatars->CreateNewAvatar('NewAvatarForm');
 } else {
 
-    $objUsers = new Users();
     $objProcessForm = new ProcessForm();
     $token = $objProcessForm->GenerateFormToken('NewAvatarForm');
-    ?>
 
+    $avatar_ids = $objAvatars->AvatarList($_SESSION['user_id']);
+    $handle = $objAvatars->GetHandle($avatar_ids[0]);
+
+    ?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -32,7 +35,7 @@ if ($_POST != null) {
         <meta name="author" content="">
         <link rel="shortcut icon" href="ico/favicon.png">
 
-        <title>Kheyos: Create your first Avatar.</title>
+        <title>Kheyos: Create Avatar.</title>
 
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -54,6 +57,18 @@ if ($_POST != null) {
 
             $(document).ready(function () {
 
+                $(".prev-created-avatars").hide();
+                $("#<?php echo $handle; ?>").show();
+
+                $(".avatar-list").click(function () {
+                    $("a.active").removeClass("active").addClass("inactive");
+                    $(this).removeClass("inactive").addClass('active');
+                    $(".prev-created-avatars").hide();
+
+                    theDiv = $(this).attr("href");
+                    $(theDiv).show();
+                });
+
                 $('#error-msg').hide();
 
                 $('#btnCreate').click(function (event) {
@@ -72,7 +87,7 @@ if ($_POST != null) {
                         success: function (response) {
                             if (response == "Y") {
                                 $('#error-msg').hide();
-                                $('form').trigger('submit', true);
+                                $('#NewAvatarForm').submit();
                             }
                             else {
                                 $('#error-msg').show();
@@ -84,44 +99,40 @@ if ($_POST != null) {
                 });
 
             });
+
         </script>
 
     </head>
 
-    <body>
+    <body class="primary_page_body">
+    <?php
+    require_once 'navbar.php';
+    ?>
     <div class="container">
         <!-- Example row of columns -->
         <div class="row">
-            <div class="col-md-1">
-            </div>
-            <div class="col-md-10">
-                <!-- header_intro.html -->
-                <header>
-                    <div id="header_img"></div>
-                    <hr/>
-                </header>
-                <!-- /header_intro.html -->
-                <header>
-                    <div id="header_create_avatar_img"></div>
-                </header>
+            <div class="col-md-12">
                 <div class="row">
-
-                    <div class="col-md-7">
-                        <div id="error-msg" class="alert alert-danger alert-dismissable">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <strong>Error!</strong> Username already exists. Please choose a different one.
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                    </div>
-
-                    <form data-toggle="validator" role="form" enctype="multipart/form-data" name="NewAvatarForm"
-                          method="POST" action="create_first_avatar.php">
+                    <form data-toggle="validator" role="form" enctype="multipart/form-data" id="NewAvatarForm"
+                          name="NewAvatarForm"
+                          method="POST" action="create_new_avatar.php">
                         <input type="hidden" name="token" value="<?php echo $token; ?>">
 
                         <div class="col-md-12">
-                            <h2>Create your first Avatar</h2>
+                            <h2>Create your new Avatar</h2>
                             <br/>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-7">
+                                <div id="error-msg" class="alert alert-danger alert-dismissable">
+                                    <button type="button" class="close" data-dismiss="alert"
+                                            aria-hidden="true">&times;</button>
+                                    <strong>Error!</strong> Username already exists. Please choose a different one.
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -134,8 +145,8 @@ if ($_POST != null) {
                             </div>
                             <div class="col-md-5">
                             	<span id="profile_pic_on_focus_info" class="text-info">
-					Choose your profile picture. <br/>
-				</span>
+                                    Choose your profile picture. <br/>
+                                </span>
                             </div>
                         </div>
 
@@ -205,15 +216,64 @@ if ($_POST != null) {
 
                     </form>
                 </div>
-                <br/><br/>
-
-                <?php
-                require_once 'footer.php';
-                ?>
-            </div>
-            <div class="col-md-1">
             </div>
         </div>
+
+        <br/><br/>
+
+        <div class="row fillers_max_780">
+            <hr/>
+            <h2 class="text-center">Previously created Avatars.</h2>
+            <br/>
+
+            <div class="col-sm-4">
+                <div class="list-group avatars_page_avatars_list">
+                    <?php
+                    for ($i = 0; $i < count($avatar_ids); $i++) {
+                        $avatar_info = $objAvatars->GetAvatarInfo($avatar_ids[$i]);
+                        $picture_id = $objPictures->GetProfilePictureId($avatar_ids[$i]);
+                        ?>
+                        <a href="#<?php echo $avatar_info['handle']; ?>" class="avatar-list list-group-item
+            <?php
+                        if ($avatar_id != 0) {
+
+                            if ($avatar_ids[$i] == $avatar_id)
+                                echo "active";
+                        } else {
+                            if ($i == 0)
+                                echo "active";
+                        }
+                        ?>
+
+            ">
+                            <div class="imgLiquidFill imgLiquid default_profile_20 add_display_inline_block">
+                                <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
+                            </div>
+                            <?php echo $avatar_info['name']; ?>
+                        </a>
+                    <?php
+                    }
+                    ?>
+                </div>
+                <br/>
+            </div>
+
+            <?php
+            require_once 'prev_created_avatars.php';
+            ?>
+        </div>
+        <div class="fillers_min_768">
+            <hr>
+            <?php
+            require_once 'settings_bar.php';
+            ?>
+        </div>
+        <?php
+
+        require_once 'footer.php';
+
+        ?>
+
     </div>
     <!-- /container -->
 
@@ -267,8 +327,6 @@ if ($_POST != null) {
         }
 
     </script>
-
-
     </body>
     </html>
 <?php

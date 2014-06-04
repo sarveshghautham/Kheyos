@@ -31,6 +31,8 @@ class ProcessForm
 
         // Write the generated token to the session variable to check it against the hidden field when the form is sent
         $_SESSION[$form . '_token'] = $token;
+        //echo "token:  ".$token;
+        //echo "<br>";
         return $token;
     }
 
@@ -46,6 +48,11 @@ class ProcessForm
         if (!isset($_POST['token'])) {
             return false;
         }
+
+        //echo "token1: ".$_POST['token'];
+        //echo "<br>";
+        //echo "token2: ".$_SESSION[$form . '_token'];
+        //echo "<br>";
 
         // compare the tokens against each other if they are still the same
         if ($_SESSION[$form . '_token'] !== $_POST['token']) {

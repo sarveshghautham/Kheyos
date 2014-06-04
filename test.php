@@ -5,9 +5,9 @@
  * Date: 5/16/14
  * Time: 1:20 AM
  */
-list($width, $height, $type, $attr) = getimagesize("img/batman-large.png  ");
 
-echo "Image width " . $width;
-echo "Image height " . $height;
-echo "Image type " . $type;
-echo "Attribute " . $attr;
+
+//echo $_SERVER['PHP_SELF'];
+$pageName = $_SERVER['REQUEST_URI'];
+$arr = explode('/', $pageName);
+echo $arr[1];

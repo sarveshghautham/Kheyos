@@ -61,16 +61,17 @@ $avatar_info = $objAvatars->GetAvatarInfo($avatar_id);
                     <div class="col-md-8">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="width_50 default_profile_50 add_display_inline_block">
-                                    <img src="get_profile_pic.php?picture_id=<?php echo $avatar_info['picture_id']; ?>"
-                                         class="width_50"/>
+                                <div class="imgLiquidFill imgLiquid default_profile_50">
+                                    <img
+                                        alt="<?php echo "@" . $avatar_info['handle']; ?>"
+                                        src="get_profile_pic.php?picture_id=<?php echo $_SESSION['picture_id']; ?>"/>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <h4><?php echo $avatar_info['name']; ?></h4>
-                                <h5><?php echo $avatar_info['handle']; ?></h5>
+                                <h5><?php echo "@" . $avatar_info['handle']; ?></h5>
                             </div>
                         </div>
                         <br/>
@@ -78,21 +79,9 @@ $avatar_info = $objAvatars->GetAvatarInfo($avatar_id);
                         <div class="row">
                             <div class="col-md-12">
                                 <p>
-                                    <?php echo $avatar_info['bio']; ?>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p>
-                                    <?php echo $avatar_info['location']; ?>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p>
-                                    <?php echo $avatar_info['dob']; ?>
+                                	<span class='add_word_wrap_break_word'>
+                                    		<?php echo $avatar_info['bio']; ?>
+                                    	</span>
                                 </p>
                             </div>
                         </div>

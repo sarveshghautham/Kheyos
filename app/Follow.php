@@ -42,6 +42,7 @@ class Follow
 
         $my_avatar_count = $_POST['my_avatar_count'];
 
+        //For unfollow
         for ($i = 0; $i < $my_avatar_count; $i++) {
             $my_avatar_id = $_POST['my_avatar_id_' . $i];
 
@@ -49,12 +50,14 @@ class Follow
                 if (!in_array($my_avatar_id, $myAvatarIds)) {
 
                     $delQuery = "DELETE FROM Follow WHERE avatar_id_1='$my_avatar_id' AND avatar_id_2='$avatar_id'";
+
                     if (!$this->ObjDBConnection->DeleteQuery($delQuery)) {
                         echo "There seems to be an error";
                     }
 
                 }
             } else {
+
                 $delQuery = "DELETE FROM Follow WHERE avatar_id_1='$my_avatar_id' AND avatar_id_2='$avatar_id'";
                 if (!$this->ObjDBConnection->DeleteQuery($delQuery)) {
                     echo "There seems to be an error";
@@ -62,6 +65,7 @@ class Follow
             }
         }
 
+        //For follow
         for ($i = 0; $i < count($myAvatarIds); $i++) {
 
             $CheckQuery = "SELECT COUNT(*) AS CheckFollow FROM Follow WHERE avatar_id_1='$myAvatarIds[$i]' AND avatar_id_2='$avatar_id'";
@@ -78,9 +82,66 @@ class Follow
             }
         }
 
+        $objAvatar = new Avatars();
+        $handle = $objAvatar->GetHandleFromAvatarId($avatar_id);
+
         //$this->ObjDBConnection->DBClose();
-        header('Location: profile.php?avatar_id=' . $avatar_id);
+        header('Location: profile.php?handle=' . $handle);
         //}
+    }
+
+    public function FollowSameUserAvatars()
+    {
+
+        $myAvatarIds = $_POST['my_avatar_ids'];
+        $avatar_id = $_POST['avatar_id'];
+
+        //var_dump($myAvatarIds);
+        //echo "<br>";
+        //echo $avatar_id;
+        $my_avatar_count = $_POST['my_avatar_count'];
+
+        //For unfollow
+        for ($i = 0; $i < $my_avatar_count; $i++) {
+            $my_avatar_id = $_POST['my_avatar_id_' . $i];
+
+            if ($myAvatarIds != null) {
+                if (!in_array($my_avatar_id, $myAvatarIds)) {
+
+                    $delQuery = "DELETE FROM Follow WHERE avatar_id_1='$my_avatar_id' AND avatar_id_2='$avatar_id'";
+
+                    if (!$this->ObjDBConnection->DeleteQuery($delQuery)) {
+                        echo "There seems to be an error";
+                    }
+
+                }
+            } else {
+
+                $delQuery = "DELETE FROM Follow WHERE avatar_id_1='$my_avatar_id' AND avatar_id_2='$avatar_id'";
+                if (!$this->ObjDBConnection->DeleteQuery($delQuery)) {
+                    echo "There seems to be an error";
+                }
+            }
+        }
+
+        //For follow
+        for ($i = 0; $i < count($myAvatarIds); $i++) {
+
+            $CheckQuery = "SELECT COUNT(*) AS CheckFollow FROM Follow WHERE avatar_id_1='$myAvatarIds[$i]' AND avatar_id_2='$avatar_id'";
+            $row = $this->ObjDBConnection->SelectQuery($CheckQuery);
+
+            if ($row['CheckFollow'] == 0) {
+
+                $FollowQuery = "INSERT INTO Follow VALUES (DEFAULT, '$myAvatarIds[$i]', '$avatar_id', NOW())";
+
+                if (!$this->ObjDBConnection->InsertQuery($FollowQuery)) {
+
+                    echo "There seems to be an error. Please try again after sometime.";
+                }
+            }
+        }
+        //$this->ObjDBConnection->DBClose();
+
     }
 
     public function GetMyFollowingAvatars($myAvatarList, $avatar_id)
@@ -95,6 +156,7 @@ class Follow
                 $j++;
             }
         }
+
         //$this->ObjDBConnection->DBClose();
         return $following_avatar_ids;
     }
@@ -158,4 +220,92 @@ class Follow
         return $row['FollowingCount'];
     }
 
-} 
+
+    public function GetAllFollowers($avatar_ids)
+    {
+        $j = 0;
+        //My avatar ids - $avatar_ids
+        for ($i = 0; $i < count($avatar_ids); $i++) {
+            $query = "SELECT avatar_id_2 FROM Follow WHERE avatar_id_1='$avatar_ids[$i]'";
+            $result = mysqli_query($this->ObjDBConnection->link, $query);
+            while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+                if ($i == 0) {
+                    $following_ids[$j] = $row['avatar_id_2'];
+                    $j++;
+                } else {
+                    if (!in_array($row['avatar_id_2'], $following_ids)) {
+                        $following_ids[$j] = $row['avatar_id_2'];
+                        $j++;
+                    }
+                }
+            }
+        }
+        return $following_ids;
+    }
+
+    public function GetFollowActivity($user_id)
+    {
+        $query = "SELECT * FROM Follow
+                  WHERE (avatar_id_1 IN
+                  (SELECT avatar_id FROM Avatars
+                  WHERE user_id='$user_id') AND
+                  avatar_id_2 NOT IN
+                  (SELECT avatar_id FROM Avatars
+                  WHERE user_id='$user_id'))
+                  OR
+                  (avatar_id_2 IN
+                  (SELECT avatar_id FROM Avatars
+                  WHERE user_id='$user_id')
+                  AND
+                  avatar_id_1 NOT IN
+                  (SELECT avatar_id FROM Avatars
+                  WHERE user_id='$user_id'))
+                  ORDER BY time DESC";
+
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+
+        $i = 0;
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            $follow_ids[$i] = $row['follow_id'];
+            $i++;
+
+        }
+        return $follow_ids;
+
+    }
+
+    public function GetFollowActivityForAvatar($avatar_id)
+    {
+
+        $query = "SELECT * FROM Follow
+                  WHERE avatar_id_1 = '$avatar_id'
+                  OR
+                  avatar_id_2 = '$avatar_id'
+                  ORDER BY time DESC";
+
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+
+        $i = 0;
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            $follow_ids[$i] = $row['follow_id'];
+            $i++;
+
+        }
+        return $follow_ids;
+
+    }
+
+    public function GetFollowTimeStamp($follow_id)
+    {
+        $query = "SELECT time FROM Follow WHERE follow_id='$follow_id'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+        return $row['time'];
+    }
+
+    public function GetFollowInfo($follow_id)
+    {
+        $query = "SELECT * FROM Follow WHERE follow_id = '$follow_id'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+        return $row;
+    }
+}

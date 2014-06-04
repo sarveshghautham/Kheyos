@@ -51,7 +51,9 @@ $objUsers->SendConfirmationMail();
                 <div id="header_register_img"></div>
             </header>
             <h3>Account successfully registered!<br/></h3>
-            <h4>We have sent a mail to the Email Id registered. Click on the link to activate your account.</h4>
+            <h4>You have officially agreed to have a Kheyos Account from this day forward, for better and for worse, for
+                richer and for poorer, in sickness and in health, forever and forever and forever. </h4>
+            <h4>PS, We have sent a mail to the Email Id registered. Click on the link to activate your account.</h4>
 
             <br/>
             <?php

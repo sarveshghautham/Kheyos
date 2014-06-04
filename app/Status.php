@@ -8,6 +8,7 @@
 
 require_once 'app/DBConnection.php';
 require_once 'app/ProcessForm.php';
+require_once 'app/Pictures.php';
 
 class Status
 {
@@ -24,35 +25,50 @@ class Status
 
     public function UpdateStatus($form)
     {
-
         $whiteList = array('token',
             'txtStatus',
-            'chkAvatars',
+            'radioAvatars',
+            'statusPic',
+            'selBgColor',
+            'selFontColor',
             'btnUpdate'
         );
 
         if ($this->ObjProcessForm->FormPOST($form, 'btnUpdate', $whiteList)) {
-            $avatar_ids = $_POST['chkAvatars'];
-            //          var_dump($avatar_ids);
-            //        echo "<br>".count($avatar_ids);
 
-            for ($i = 0; $i < count($avatar_ids); $i++) {
+            $avatar_id = $_POST['radioAvatars'];
+            $bgColor = $_POST['selBgColor'];
+            $fontColor = $_POST['selFontColor'];
+            $status = addslashes($_POST['txtStatus']);
 
-                $current_active_status_id = $this->GetActiveStatusId($avatar_ids[$i]);
-                $inactive_query = "UPDATE Status SET active = '0' WHERE status_id='$current_active_status_id'";
-                mysqli_query($this->ObjDBConnection->link, $inactive_query);
+            $picture_id = 0;
 
-                $query = "INSERT INTO Status VALUES (DEFAULT, '$avatar_ids[$i]', '$_POST[txtStatus]', '1', NOW())";
-//                echo $query;
-                mysqli_query($this->ObjDBConnection->link, $query);
+            if (isset ($_FILES['statusPic'])) {
+
+                $objPictures = new Pictures();
+                $picture_id = $objPictures->UploadStatusPicture();
             }
-            $_SESSION['avatar_id'] = $avatar_ids[0];
+
+            //for ($i = 0; $i < count($avatar_ids); $i++) {
+
+            $current_active_status_id = $this->GetActiveStatusId($avatar_id);
+            $inactive_query = "UPDATE Status SET active = '0' WHERE status_id='$current_active_status_id'";
+            mysqli_query($this->ObjDBConnection->link, $inactive_query);
+
+            $query = "INSERT INTO Status VALUES (DEFAULT, '$avatar_id', '$picture_id', '$status', '1', '$bgColor','$fontColor', NOW())";
+            //echo $query;
+            mysqli_query($this->ObjDBConnection->link, $query);
+            //}
+
+            $_SESSION['avatar_id'] = $avatar_id;
             //$this->ObjDBConnection->DBClose();
-            header('Location: my_avatars.php');
+            header('Location: home.php');
+
         } else {
             //$this->ObjDBConnection->DBClose();
             echo "Failed";
         }
+
     }
 
     function GetStatus($avatar_id)
@@ -105,5 +121,40 @@ class Status
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
         //$this->ObjDBConnection->DBClose();
         return $row;
+    }
+
+    function GetAllStatusIdsList($user_id)
+    {
+
+        $i = 0;
+
+        $query = "SELECT DISTINCT status_id, MAX(time) AS temp FROM Status
+                  WHERE (avatar_id IN
+                  (SELECT DISTINCT avatar_id_2 FROM Follow
+                  WHERE avatar_id_1 IN
+                  (SELECT DISTINCT avatar_id FROM Avatars
+                  WHERE user_id = '$user_id')) OR
+                  avatar_id IN (SELECT DISTINCT avatar_id FROM Avatars
+                  WHERE user_id = '$user_id'))
+                  AND active='1'
+                  GROUP BY avatar_id
+                  ORDER BY temp DESC";
+
+        $result = mysqli_query($this->ObjDBConnection->link, $query);
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            $status_ids[$i] = $row['status_id'];
+            $i++;
+        }
+
+        //$this->ObjDBConnection->DBClose();
+        return $status_ids;
+    }
+
+    function GetAvatarId($status_id)
+    {
+        $query = "SELECT avatar_id FROM Status WHERE status_id = '$status_id'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+
+        return $row['avatar_id'];
     }
 } 

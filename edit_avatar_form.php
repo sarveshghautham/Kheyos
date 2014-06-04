@@ -6,12 +6,20 @@
  * Time: 12:44 AM
  */
 
+if (!isset ($_SESSION['user_id'])) {
+    header('Location: login.php');
+}
+
 for ($i = 0; $i < count($avatar_ids); $i++) {
     $avatar_info = $objAvatars->GetAvatarInfo($avatar_ids[$i]);
-    $picture_id = $objPictures->GetProfilePictureId($avatar_ids[$i])
+    $picture_id = $objPictures->GetProfilePictureId($avatar_ids[$i]);
+    $follow_avatar_list = $objFollow->GetMyFollowingAvatars($avatar_list, $avatar_ids[$i]);
+
     ?>
 
     <div class="edit-avatar-form col-sm-8" id="<?php echo $avatar_info['handle']; ?>">
+        <h3 class="text-center">Edit Avatar: <span class="text-muted"><?php echo $avatar_info['name']; ?></span></h3>
+        <br/>
 
         <form class="form-horizontal" role="form" enctype="multipart/form-data" name="EditAvatarForm" method="POST"
               action="edit_avatars.php">
@@ -19,170 +27,101 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
             <input type="hidden" name="token" value="<?php echo $token; ?>">
 
             <div class="form-group">
-                <label class="col-lg-2 control-label">
-                    <div class="width_30 default_profile_30 add_display_inline_block">
-                        <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>" class="width_30"/>
+                <label class="col-sm-3 control-label">
+                    <div class="imgLiquidFill imgLiquid default_profile_50 add_display_inline_block">
+                        <img src="/get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
                     </div>
                 </label>
 
-                <div class="col-lg-10">
-                    <a class="btn btn-default btn-xs" href='javascript:;'>
-                        Change Profile Picture
-                        <input type="file" class="btn-file" name="profPicture" size="40"
-                               onchange='$("#upload-file-info").html($(this).val());'>
-                    </a>
-                    <br/>
-
-                    <a class='btn btn-default btn-xs'>
-                        Remove Profile Picture
-                    </a>
-
+                <div class="col-sm-9">
+                    <br class="fillers_max_768"/>
+                    <input type="file" name="profPicture" size="40"
+                           onchange='$("#upload-file-info").html($(this).val());' class="Profile_Pic_Input_File">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-sm-2 control-label">Name</label>
+                <label class="col-sm-3 control-label">Name</label>
 
-                <div class="col-sm-10">
+                <div class="col-sm-9">
                     <input class="form-control" name="txtName" value="<?php echo $avatar_info['name']; ?>">
                 </div>
             </div>
 
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <span id="name_on_error" class="error_message">
-                        <em>FirstName LastName or <br/>
-                            FirstName MiddleName LastName</em> <br/><br/>
-                    </span>
+                <label class="col-sm-3 control-label">Handle</label>
+
+                <div class="col-sm-9">
+                    <input class="form-control " name="txtHandle" value="<?php echo $avatar_info['handle']; ?>"
+                           disabled>
+                    <span class="help-block">You cannot edit Handle.</span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="col-sm-2 control-label">Handle</label>
+                <label class="col-sm-3 control-label">Bio</label>
 
-                <div class="col-sm-10">
-                    <div class="input-group">
-                        <span class="input-group-addon">@</span>
-                        <input class="form-control" name="txtHandle" value="<?php echo $avatar_info['handle']; ?>">
-                    </div>
+                <div class="col-sm-9">
+                    <textarea name="txtBio" class="form-control" rows="4"><?php echo $avatar_info['bio']; ?></textarea>
                 </div>
             </div>
+
+            <input type="hidden" name="my_avatar_count" value="<?php echo count($avatar_list); ?>">
 
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <span id="handle_on_error" class="error_message">
-                        <em>[username]@[domain].com</em> <br/>
-                    </span>
+                <label class="col-sm-3 control-label">Follow With</label>
+
+                <div class="col-sm-9">
+                    <?php
+                    for ($j = 0; $j < count($avatar_list); $j++) {
+
+                        if ($avatar_ids[$i] != $avatar_list[$j]) {
+
+                            $my_avatar_info = $objAvatars->GetAvatarInfo($avatar_list[$j]);
+                            $my_picture_id = $objPictures->GetProfilePictureId($avatar_list[$j]);
+
+                            ?>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="hidden" name="my_avatar_id_<?php echo $j; ?>"
+                                           value="<?php echo $avatar_list[$j]; ?>">
+                                    <input type="checkbox" name="my_avatar_ids[]"
+                                           value="<?php echo $avatar_list[$j]; ?>"
+                                        <?php
+
+                                        if (count($follow_avatar_list) != 0) {
+                                            if (in_array($avatar_list[$j], $follow_avatar_list)) {
+                                                echo "Checked";
+                                            }
+                                        }
+                                        ?>
+
+                                        >
+
+                                    <div class="imgLiquidFill imgLiquid default_profile_20 add_display_inline_block">
+                                        <img src="/get_profile_pic.php?picture_id=<?php echo $my_picture_id; ?>"/>
+                                    </div>
+                                    <?php
+                                    echo $my_avatar_info['name'];
+                                    ?>
+                                </label>
+                            </div>
+
+                        <?php
+                        }
+                    }
+                    ?>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Bio</label>
-
-                <div class="col-sm-10">
-                    <textarea name="txtBio" class="form-control" rows="2"><?php echo $avatar_info['bio']; ?></textarea>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <span id="bio_on_error" class="error_message">
-                        <em>Password should be 8 characters or more.</em> <br/>
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Birthday</label>
-
-                <div class="col-sm-10">
-                    <input type="date" name="txtDate" class="form-control" value="<?php echo $avatar_info['dob']; ?>">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <span id="birthday_on_error" class="error_message">
-
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Location</label>
-
-                <div class="col-sm-10">
-                    <input name="txtLocation" class="form-control" value="<?php echo $avatar_info['location']; ?>">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <span id="location_on_error" class="error_message">
-                        <em>City, Country</em> <br/>
-                        <em>Chennai, India</em> <br/>
-                        <em>Madurai, India</em> <br/>
-                    </span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Gender</label>
-
-                <div class="col-sm-10">
-                    <div class="radio" onFocus="Info_Over('#gender_on_focus_info')"
-                         onBlur="Info_Out('#gender_on_focus_info')">
-                        <label>
-                            <input type="radio" name="radioGender" id="optionsRadios1"
-                                   value="2" <?php if ($avatar_info['gender'] == 2) {
-                                echo "checked";
-                            } ?>> Female
-                        </label>
-                    </div>
-                    <div class="radio" onFocus="Info_Over('#gender_on_focus_info')"
-                         onBlur="Info_Out('#gender_on_focus_info')">
-                        <label>
-                            <input type="radio" name="radioGender" id="optionsRadios2"
-                                   value="1" <?php if ($avatar_info['gender'] == 1) {
-                                echo "checked";
-                            } ?>> Male
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Account Type</label>
-
-                <div class="col-sm-10">
-                    <div class="radio" onFocus="Info_Over('#account_type_on_focus_info')"
-                         onBlur="Info_Out('#account_type_on_focus_info')">
-                        <label>
-                            <input type="radio" name="radioType" id="optionsRadios_1"
-                                   value="0" <?php if ($avatar_info['avatar_type'] == 0) {
-                                echo "checked";
-                            } ?>>
-                            Public Account - Anyone can follow you (Default)
-                        </label>
-                    </div>
-                    <div class="radio" onFocus="Info_Over('#account_type_on_focus_info')"
-                         onBlur="Info_Out('#account_type_on_focus_info')">
-                        <label>
-                            <input type="radio" name="radioType" id="optionsRadios_2"
-                                   value="1" <?php if ($avatar_info['avatar_type'] == 1) {
-                                echo "checked";
-                            } ?>>
-                            Protected Account - You decide who follows you
-                        </label>
-                    </div>
-                    <span class="help-block with-errors"></span>
-                </div>
-            </div>
 
             <input type="hidden" name="avatar_id" value="<?php echo $avatar_ids[$i]; ?>"/>
 
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" name="btnEdit" class="btn btn-primary btn-lg">Save Changes</button>
+                <div class="col-sm-offset-3 col-sm-9">
+                    <br/>
+                    <button type="submit" id="btnEdit" name="btnEdit" class="btn btn-primary btn-lg">Save Changes
+                    </button>
                 </div>
             </div>
 
@@ -190,3 +129,51 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
     </div>
 <?php
 }
+?>
+
+<script type='text/javascript'>
+    $(".Profile_Pic_Input_File").change(function () {
+        var fthis = this;
+        var f = this.files[0];
+        var ext = $(this).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+            alert('invalid extension!');
+            reset_form_element($(this));
+        }
+        else {
+            fSize = Math.round(f.fileSize / 1024);
+            if (fSize > 4096) {
+                alert("The image is larger than 4 MB. Choose a smaller image.");
+                reset_form_element($(fthis));
+            }
+            else {
+                var _URL = window.URL || window.webkitURL;
+                var image, file;
+                if ((file = this.files[0])) {
+                    image = new Image();
+                    image.onload = function () {
+                        if (this.width > 250) {
+                            if (this.height > 250) {
+
+                            }
+                            else {
+                                alert("The image should be larger than 250 x 250!");
+                                reset_form_element($(fthis));
+                            }
+                        }
+                        else {
+                            alert("The image should be larger than 250 x 250!");
+                            reset_form_element($(fthis));
+                        }
+                    };
+                    image.src = _URL.createObjectURL(file);
+                }
+            }
+        }
+    });
+
+    function reset_form_element(e) {
+        e.wrap('<form>').parent('form').trigger('reset');
+        e.unwrap();
+    }
+</script>

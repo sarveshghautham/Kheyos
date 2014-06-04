@@ -60,7 +60,6 @@ if (isset($_POST['btnUpload'])) {
     ?>
 
     <div class="container" id="update_status_page_form">
-
         <div class="row">
             <div class="col-sm-2">
                 <div class="form-group text-center">
@@ -102,8 +101,13 @@ if (isset($_POST['btnUpload'])) {
                                     <?php
                                     } else {
                                         ?>
-                                        <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"
-                                             class="width_20"/>
+
+                                        <div
+                                            class="imgLiquidFill imgLiquid default_profile_20 add_display_inline_block">
+                                            <img alt="<?php echo "@" . $avatar_info['handle']; ?>"
+                                                 src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
+                                        </div>
+
                                     <?php
                                     }
                                     echo $avatar_info['name'];
@@ -113,7 +117,6 @@ if (isset($_POST['btnUpload'])) {
                         <?php
                         }
                         ?>
-
                     </div>
                     <div class="text-right">
                         <button type="button" class="btn btn-default">No Cover</button>
@@ -206,72 +209,22 @@ if (isset($_POST['btnUpload'])) {
         </div>
     </div>
     <div class="container">
-        <hr>
-        <div class="input-group" id="Search">
-            <input id="Search_Input" type="text" class="form-control" placeholder="@Kheyos_Handle or Full Name">
-				<span class="input-group-btn">
-					<button class="btn btn-default" type="button">
-                        <span class="glyphicon glyphicon-search"></span>
-                    </button>
-				</span>
-        </div>
-        <!-- /input-group -->
-        <br/>
-
-        <div class="btn-group btn-group-justified" id="Settings">
-            <div class="btn-group">
-                <button type="button" class="btn btn-default">Account</button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-default">Help</button>
-            </div>
-            <div class="btn-group">
-                <form action="logout.php" method="POST">
-                    <button type="submit" class="btn btn-default">Sign Out</button>
-                </form>
-            </div>
+        <div class="fillers_min_768">
+            <hr>
+            <?php
+            require_once 'settings_bar.php';
+            ?>
         </div>
         <?php
         require_once 'footer.php';
         ?>
-
     </div>
     <!--/.container-->
-    <!-- core-javascript.html -->
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script type='text/javascript'>
-        function Info_Over(x) {
-            $(x).show();
-        }
 
-        function Info_Out(x) {
-            $(x).hide();
-        }
+    <?php
+    require_once 'core-javascript.php';
+    ?>
 
-        $('#navbar_search').click(function () {
-            $('#Search_Input').show().focus();
-        });
-
-        <!-- If logged in -->
-        $('.user_info_popover').popover();
-
-        $('.user_info_popover').click(function (e) {
-            e.stopPropagation();
-        });
-
-        $(document).click(function (e) {
-            if (($('.popover').has(e.target).length == 0) || $(e.target).is('.close')) {
-                $('.user_info_popover').popover('hide');
-            }
-        });
-
-        $(window).resize(function () {
-            $('.user_info_popover').popover('hide');
-        });
-        <!-- /If logged in -->
-    </script>
-    <!-- /core-javascript.html -->
     </body>
     </html>
 <?php
