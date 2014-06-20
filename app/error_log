@@ -1,0 +1,4 @@
+[28-May-2014 21:23:13 America/New_York] PHP Warning:  require_once(app/Pictures.php): failed to open stream: No such file or directory in /home/kheyosco/public_html/developer/app/Activity.php on line 9
+[28-May-2014 21:23:13 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'app/Pictures.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/kheyosco/public_html/developer/app/Activity.php on line 9
+[28-May-2014 21:23:20 America/New_York] PHP Warning:  require_once(app/DBConnection.php): failed to open stream: No such file or directory in /home/kheyosco/public_html/developer/app/Status.php on line 9
+[28-May-2014 21:23:20 America/New_York] PHP Fatal error:  require_once(): Failed opening required 'app/DBConnection.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/kheyosco/public_html/developer/app/Status.php on line 9
