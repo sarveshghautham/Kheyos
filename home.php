@@ -208,6 +208,53 @@ require_once 'core-javascript.php';
     });
 </script>
 
+<script type='text/javascript'>
+    $("#Status_Update_Input_File").change(function () {
+        var fthis = this;
+        var f = this.files[0];
+        var ext = $(this).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+            alert('invalid extension!');
+            reset_form_element($(this));
+        }
+        else {
+            fSize = Math.round(f.fileSize / 1024);
+            if (fSize > 8192) {
+                alert("The image is larger than 8 MB. Choose a smaller image.");
+                reset_form_element($(fthis));
+            }
+            else {
+                var _URL = window.URL || window.webkitURL;
+                var image, file;
+                if ((file = this.files[0])) {
+                    image = new Image();
+                    image.onload = function () {
+                        if (this.width > 899) {
+                            if (this.height > 499) {
+
+                            }
+                            else {
+                                alert("The image should be larger than 900 x 500!");
+                                reset_form_element($(fthis));
+                            }
+                        }
+                        else {
+                            alert("The image should be larger than 900 x 500!");
+                            reset_form_element($(fthis));
+                        }
+                    };
+                    image.src = _URL.createObjectURL(file);
+                }
+            }
+        }
+    });
+
+    function reset_form_element(e) {
+        e.wrap('<form>').parent('form').trigger('reset');
+        e.unwrap();
+    }
+</script>
+
 </body>
 
 </html>
