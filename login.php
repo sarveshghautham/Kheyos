@@ -49,12 +49,19 @@ if (isset($_POST['btnLogin'])) {
 
         <script>
 
-            $(document).ready(function () {
-
+            $(document).ready(function(){
+		var ref = document.referrer;
+		if (ref.match(/^https?:\/\/([^\/]+\.)?kheyos\.com(\/|$)/i)) {
+			$('#error-msg0').show();
+		}
+		else {
+			$('#error-msg0').hide();
+		}
+		
                 $('#error-msg1').hide();
                 $('#error-msg2').hide();
 
-                $('#btnLogin').click(function (event) {
+                $('#btnLogin').click(function(event) {
 
                     $('#error-msg0').hide();
                     $('#error-msg1').hide();
@@ -71,9 +78,10 @@ if (isset($_POST['btnLogin'])) {
 
                         data: {email: email, password: password},
                         cache: false,
-                        success: function (response) {
+                        success: function(response){
 
-                            if (response == "Y") {
+                            if(response == "Y")
+                            {
                                 $('#error-msg').hide();
                                 $('#error-msg1').hide();
                                 $('#error-msg2').hide();
@@ -82,7 +90,8 @@ if (isset($_POST['btnLogin'])) {
                             else if (response == "X") {
                                 $('#error-msg2').show();
                             }
-                            else {
+                            else
+                            {
                                 $('#error-msg1').show();
                             }
                         }
@@ -90,14 +99,14 @@ if (isset($_POST['btnLogin'])) {
                     });
 
                 });
-
             });
-
+		
         </script>
     </head>
 
     <body>
     <div class="container">
+    	
         <!-- Example row of columns -->
         <div class="row">
             <div class="col-md-1">
@@ -113,98 +122,87 @@ if (isset($_POST['btnLogin'])) {
                     <div class="col-md-12">
                         <h2>Log In to Kheyos</h2>
                         <label class="checkbox">
-                            (Or <a href="register.php">Create an Account</a>)
+	                	(Or <a href="register.php">Create an Account</a>)
                         </label>
                         <br/>
-
                         <div class="row">
                             <div class="col-md-7">
                                 <div id="error-msg0" class="alert alert-danger alert-dismissable">
-                                    <button type="button" class="close" data-dismiss="alert"
-                                            aria-hidden="true">&times;</button>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     <strong>Error!</strong> Something's not right. Please login again!
                                 </div>
                                 <div id="error-msg1" class="alert alert-danger alert-dismissable">
-                                    <button type="button" class="close" data-dismiss="alert"
-                                            aria-hidden="true">&times;</button>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     <strong>Error!</strong> Wrong Email - Password combination.
                                 </div>
                                 <div id="error-msg2" class="alert alert-danger alert-dismissable">
-                                    <button type="button" class="close" data-dismiss="alert"
-                                            aria-hidden="true">&times;</button>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     <strong>Error!</strong> Looks like the Email is not registered.
                                 </div>
                             </div>
                             <div class="col-md-5">
                             </div>
                         </div>
-                        <form id="LoginForm" name="LoginForm" data-toggle="validator" action="auth_verify.php"
-                              method="POST">
+                        <form id="LoginForm" name="LoginForm" data-toggle="validator" action="auth_verify.php" method="POST">
 
-                            <br/>
                             <input type="hidden" name="token" value="<?php echo $token; ?>">
-
-                            <div class="row">
-                                <div class="form-group">
-                                    <div class="col-md-7">
-                                        <input type="email" id="txtEmail" name="txtEmail" class="form-control"
-                                               placeholder="Enter your Email id"
-                                               onFocus="Info_Over('#email_on_focus_info')"
-                                               onBlur="Info_Out('#email_on_focus_info')"
-                                               required>
-                                        <span class="help-block with-errors"></span>
-                                    </div>
-                                    <div class="col-md-5">
+				                <div class="row">
+	                            <div class="form-group">
+	                                <div class="col-md-7">
+	                                    <input type="email" id="txtEmail" name="txtEmail" class="form-control"
+	                                           placeholder="Enter your Email id" 
+	                                           onFocus="Info_Over('#email_on_focus_info')" onBlur="Info_Out('#email_on_focus_info')" 
+	                                           required>
+                                           <span class="help-block with-errors"></span>
+	                                </div>
+	                                <div class="col-md-5">
 											<span id="email_on_focus_info" class="text-info add_display_none">
 												Enter your valid Email Id. We will send you a mail with link to verify. <br/>
 											</span>    
 											<span id="email_on_error" class="error_message">     
 												<em>[username]@[domain].com</em> <br/>
 											</span>
-                                        <br/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-md-7">
-                                        <input type="password" id="txtPassword" name="txtPassword" class="form-control"
-                                               placeholder="Enter your Password"
-                                               onFocus="Info_Over('#password_on_focus_info')"
-                                               onBlur="Info_Out('#password_on_focus_info')"
-                                               required>
-                                        <span class="help-block with-errors"></span>
-                                    </div>
-                                    <div class="col-md-5">
+	                                    <br/>
+	                                </div>
+	                            </div>
+	
+	                            <div class="form-group">
+	                                <div class="col-md-7">
+	                                    	<input type="password" id="txtPassword" name="txtPassword" class="form-control" placeholder="Enter your Password"
+	                                           	onFocus="Info_Over('#password_on_focus_info')" onBlur="Info_Out('#password_on_focus_info')" 
+	                                           	required>
+		                 		<span class="help-block with-errors"></span>
+	                                </div>
+	                                <div class="col-md-5">
 											<span id="password_on_focus_info" class="text-info add_display_none">
 												Password should be 8 characters or more. Choose a strong password which is a combination of Capital and Small case alphabets, Symbols and Numbers. <br/>
 											</span> 
 											<span id="password_on_error" class="error_message">     
 												<em>Password should be 8 characters or more.</em> <br/>
 											</span>
-                                        <br/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-md-7">
-                                        <label class="checkbox">
-                                            <input type="checkbox" value="remember-me"> Remember me
-                                        </label>
-                                    </div>
-                                    <div class="col-md-5">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-7">
-                                        <button class="btn btn-lg btn-primary btn-block" id="btnLogin" name="btnLogin"
-                                                type="submit">
-                                            Log in
-                                        </button>
-                                    </div>
-                                    <div class="col-md-5">
-                                    </div>
-                                </div>
-                            </div>
+	                                    <br/>
+	                                </div>
+	                            </div>
+	
+		             	<div class="form-group">
+	                            	<div class="col-md-7">	      		                               
+	                                    <label class="checkbox">
+	                                        <input type="checkbox" value="remember-me"> Remember me
+	                                    </label>
+		                	</div>
+		                	<div class="col-md-5">
+		                       	</div>
+		          	</div>
+		          	<div class="form-group">
+	                            	<div class="col-md-7">
+	                                    <button class="btn btn-lg btn-primary btn-block" id="btnLogin" name="btnLogin" type="submit">
+	                                    	Log in
+	                                    </button>
+		                        </div>
+		                	<div class="col-md-5">
+		                       	</div>
+		          	</div>
+	                    </div>
                             <br/>
                             <label class="checkbox">
                                 <a href="forgot_password.php">Forgot your password?</a>
