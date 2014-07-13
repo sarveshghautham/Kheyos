@@ -8,4 +8,4 @@ if ($_SESSION['user_id'] != null) {
 require_once 'app/Users.php';
 
 $obj_users = new Users();
-$obj_users->ResetCode();
+$obj_users->ForgotPassword();

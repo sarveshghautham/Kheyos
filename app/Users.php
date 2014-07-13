@@ -249,9 +249,10 @@ class Users
         }
     }
 
-    function ResetCode()
+    function ForgotPassword()
     {
 
+//        $email = filter_input($_POST['email'], FILTER_SANITIZE_EMAIL);
         $email = $_POST['email'];
         if ($email == null) {
             echo "N";
@@ -266,7 +267,7 @@ class Users
                 $query = "INSERT INTO ResetPasswordUsers VALUES ('$email', '$code', NOW())";
                 $this->ObjDBConnection->InsertQuery($query);
 
-                $message = "Copy this code " . $code . " and paste it in the code text box \n\n";
+                $message = "Clink on the <a href=http://www.kheyos.com/reset_password.php?email=" . $email . "&code=" . $code . "> link </a> to reset your password. \n\n";
                 $message .= "\n\nRegards, \n";
                 $message .= "Kheyos Team";
 
@@ -280,9 +281,9 @@ class Users
                 mail($to, 'Reset your password', $message, $headers);
 
                 echo "Y";
+                //header ('Location: login.php');
             }
         }
-
     }
 
     function EmailExists($email)
@@ -315,7 +316,6 @@ class Users
                 echo "N";
             }
         }
-
     }
 
     function UpdatePassword()
@@ -344,5 +344,19 @@ class Users
                 echo "N";
             }
         }
+    }
+
+    function CheckResetCode($email, $code)
+    {
+
+        $query = "SELECT reset_code FROM ResetPasswordUsers WHERE email='$email'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+
+        if ($row['reset_code'] == $code) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

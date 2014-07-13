@@ -1,9 +1,36 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: sarvesh
+ * Date: 7/13/14
+ * Time: 1:13 AM
+ */
 
 session_start();
 
 if ($_SESSION['user_id'] != null) {
     header('Location: home.php');
+}
+
+//    echo $_GET['email'];
+//    echo "<br>";
+//    echo $_GET['code'];
+//    echo "<br>";
+
+if ($_GET['email'] == null || $_GET['code'] == null) {
+    header('Location: error.php');
+}
+
+require_once 'app/Users.php';
+
+//$email = filter_input()
+$email = $_GET['email'];
+$code = $_GET['code'];
+$ObjUsers = new Users();
+
+if (!$ObjUsers->CheckResetCode($email, $code)) {
+    //TODO: Custom error page
+    header('Location: error.php');
 }
 
 ?>
@@ -17,7 +44,7 @@ if ($_SESSION['user_id'] != null) {
     <meta name="author" content="">
     <link rel="shortcut icon" href="ico/favicon.png">
 
-    <title>Kheyos: Forgot Password.</title>
+    <title>Kheyos: Reset your password.</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +68,6 @@ if ($_SESSION['user_id'] != null) {
             color: green;
         }
 
-
     </style>
 
     <?php
@@ -52,30 +78,38 @@ if ($_SESSION['user_id'] != null) {
 
         $(document).ready(function () {
 
-            $('#email_send').click(function (event) {
+            $('#password_send').click(function (event) {
 
                 event.preventDefault();
 
                 var email = $('#email').val();
+                var password = $('#password').val();
+                var repassword = $('#repassword').val();
 
                 $.ajax({
                     type: "POST",
-                    url: "reset_code.php",
+                    url: "update_password.php",
 
-                    data: {email: email},
+                    data: {email: email, password: password, repassword: repassword},
                     cache: false,
                     success: function (response) {
 
                         if (response == "Y") {
-                            $('#code_form').show();
+
                             $('#email_form').hide();
+                            $('#code_form').hide();
+                            $('#password_form').hide();
                             $('#status').show();
-                            $('#status').html("Check your mail for the reset password link");
+                            $('#status').html("Password reset successful. Proceed to <a href=index.php>login</a> page. ");
+
+
                         }
                         else {
                             $('#status').show();
-                            $('#status').html("Looks like you have entered a wrong email ID.");
+                            $('#status').html("Oops. Something went wrong. Try again.");
+
                         }
+
                     }
 
                 });
@@ -111,34 +145,58 @@ if ($_SESSION['user_id'] != null) {
                     <div class="row">
 
                         <div class="col-md-7">
-                            <h2>Forgot your Password</h2>
+                            <h2>Reset your Password</h2>
                             <br/>
 
                             <div id="status" class="alert alert-success add_display_none">
                             </div>
                         </div>
-                        <div class="col-md-5"></div>
+                        <div class="col-md-5">
+                        </div>
                     </div>
 
-                    <form name="email_form" id="email_form" method="POST" action="" data-toggle="validator">
+                    <form name="password_form" id="password_form" method="POST" action="" data-toggle="validator">
+
                         <div class="row">
 
                             <div class="col-md-7">
                                 <div class="form-group">
-                                    <input type="email" name="email" id="email" class="form-control"
-                                           placeholder="Enter your Email id" onFocus="Info_Over('#email_on_focus_info')"
-                                           onBlur="Info_Out('#email_on_focus_info')" required>
+                                    <input type="hidden" id="email" name="email" value="<?php echo $email; ?>"/>
+                                    <input type="password" name="password" id="password" class="form-control"
+                                           placeholder="Enter a new password"
+                                           onFocus="Info_Over('#password_on_focus_info')"
+                                           onBlur="Info_Out('#password_on_focus_info')" data-minlength="8"
+                                           maxlength="21" required>
                                     <span class="help-block with-errors"></span>
                                 </div>
                             </div>
 
                             <div class="col-md-5">
-                                        <span id="email_on_focus_info" class="text-info add_display_none">
-                                            Enter the Email Id with which you registered. We will send you a code, which you have to enter in the next step. <br/>
-                                        </span>
+					<span id="email_on_focus_info" class="text-info add_display_none">
+						Password should be 8 characters or more. Choose a strong password which is a combination of Capital and Small case alphabets, Symbols and Numbers. <br/>
+					</span>
                                 <br/>
                             </div>
+                        </div>
 
+                        <div class="row">
+
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <input type="password" name="repassword" id="repassword" class="form-control"
+                                           placeholder="Enter the password again" data-match="#password" maxlength="21"
+                                           onFocus="Info_Over('#confirm_password_on_focus_info')"
+                                           onBlur="Info_Out('#confirm_password_on_focus_info')" required>
+                                    <span class="help-block with-errors"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+					<span id="confirm_password_on_focus_info" class="text-info add_display_none">
+						Confirm the password entered in previous step. <br/>
+					</span>
+                                <br/>
+                            </div>
                         </div>
 
                         <br/>
@@ -149,7 +207,7 @@ if ($_SESSION['user_id'] != null) {
                             </div>
 
                             <div class="col-md-4">
-                                <button class="btn btn-lg btn-primary btn-block" type="submit" id="email_send">Go
+                                <button class="btn btn-lg btn-primary btn-block" type="submit" id="password_send">Go
                                 </button>
                             </div>
                         </div>
