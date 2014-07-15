@@ -46,6 +46,21 @@ $email = $objUsers->GetEmail($user_id);
     require_once 'core-javascript.php';
     ?>
 
+    <style type="text/css">
+
+        label.error {
+            color: red;
+            text-align: center;
+        }
+
+        #status {
+            color: green;
+            text-align: center;
+        }
+
+
+    </style>
+
     <script>
 
         $(document).ready(function () {
@@ -67,31 +82,70 @@ $email = $objUsers->GetEmail($user_id);
                 $("#edit-password").hide();
             });
 
+            $('#btnChangeEmail').click(function (event) {
 
-            //callback handler for form submit
-            $("#edit-email-form").submit(function (e) {
-                e.preventDefault(); //STOP default action
-                var postData = $(this).serializeArray();
-                var formURL = $(this).attr("action");
+                event.preventDefault();
 
-                $.ajax(
-                    {
-                        url: formURL,
-                        type: "POST",
-                        data: postData,
-                        success: function (data, textStatus, jqXHR) {
-                            //data: return data from server
-                            alert(data);
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            //if fails     
+                var oldEmail = $('#oldEmail').val();
+                var email = $('#email').val();
+                var password = $('#password').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "change_email.php",
+
+                    data: {oldEmail: oldEmail, email: email, password: password },
+                    cache: false,
+                    success: function (response) {
+
+                        if (response == "Y") {
+                            //$('#code_form').show();
+                            $('#edit-email-form').hide();
+                            $('#status').show();
+                            $('#status').html("Email updated!");
                         }
-                    });
+                        else {
+                            //$('#status').show();
+                            //$('#status').html("Looks like you have entered a wrong email ID.");
+                        }
+                    }
 
-                e.unbind(); //unbind. to stop multiple form submit.
+                });
+
             });
 
-            $("#edit-email-form").submit(); //Submit  the FORM
+            $('#btnChangePassword').click(function (event) {
+
+                event.preventDefault();
+
+                var oldpass = $('#oldPass').val();
+                var newpass = $('#newPass').val();
+                var repass = $('#rePass').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "change_password.php",
+
+                    data: {oldPass: oldpass, newPass: newpass, rePass: repass },
+                    cache: false,
+                    success: function (response) {
+                        //alert(response);
+                        if (response == "Y") {
+                            //$('#code_form').show();
+                            $('#edit-password-form').hide();
+                            $('#status1').show();
+                            $('#status1').html("Password updated!");
+                        }
+                        else {
+                            $('#status1').show();
+                            $('#status1').html("Oops something went wrong.");
+                        }
+                    }
+
+                });
+
+            });
+
         });
 
     </script>
@@ -124,6 +178,9 @@ require_once 'navbar.php';
                 <h3 class="text-center">Account Settings: <span class="text-muted"> Change Log In Email</span></h3>
                 <br/>
 
+                <div id="status" class="alert alert-success add_display_none">
+                </div>
+
                 <form id="edit-email-form" action="change_email.php" name="ChangeEmailForm" class="form-horizontal"
                       data-toggle="validator" role="form">
                     <input type="hidden" name="token" value="<?php echo $token1; ?>">
@@ -131,27 +188,29 @@ require_once 'navbar.php';
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>Current Email Address</label>
-                            <input class="form-control" name="txtOldEmail" value="<?php echo $email; ?>" disabled>
+                            <input class="form-control" id="oldEmail" name="txtOldEmail" value="<?php echo $email; ?>"
+                                   disabled>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>New Email Address</label>
-                            <input class="form-control" name="txtEmail" type="email" required>
+                            <input class="form-control" name="txtEmail" id="email" type="email" required>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>Enter Password</label>
-                            <input class="form-control" name="txtPassword" type="password" required>
+                            <input class="form-control" id="password" name="txtPassword" type="password" required>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <button type="submit" name="btnChangeEmail" class="btn btn-primary btn-lg">Save Changes
+                            <button type="submit" id="btnChangeEmail" name="btnChangeEmail"
+                                    class="btn btn-primary btn-lg">Save Changes
                             </button>
                         </div>
                     </div>
@@ -163,6 +222,9 @@ require_once 'navbar.php';
                 <h3 class="text-center">Account Settings: <span class="text-muted"> Change Log In Password</span></h3>
                 <br/>
 
+                <div id="status1" class="alert alert-success add_display_none">
+                </div>
+
                 <form id="edit-password-form" name="ChangePasswordForm" class="form-horizontal" data-toggle="validator"
                       role="form">
                     <input type="hidden" name="token" value="<?php echo $token2; ?>">
@@ -170,28 +232,29 @@ require_once 'navbar.php';
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>Current Password</label>
-                            <input class="form-control" type="password" required>
+                            <input class="form-control" type="password" id="oldPass" required>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>New Password</label>
-                            <input class="form-control" type="password" id="AccountSettingsNewPassword" required>
+                            <input class="form-control" type="password" id="newPass" required>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>Confirm New Password</label>
-                            <input class="form-control" type="password" data-match="#AccountSettingsNewPassword"
+                            <input class="form-control" type="password" id="rePass" data-match="#newPass"
                                    required>
                             <span class="help-block with-errors"></span>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+                            <button type="submit" id="btnChangePassword" class="btn btn-primary btn-lg">Save Changes
+                            </button>
                         </div>
                     </div>
                 </form>

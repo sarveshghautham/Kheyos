@@ -318,6 +318,37 @@ class Users
         }
     }
 
+    function ChangePassword()
+    {
+        $user_id = $_SESSION['user_id'];
+        $email = $this->GetEmail($user_id);
+        $oldPass = $_POST['oldPass'];
+
+        if ($this->Auth($email, $oldPass)) {
+            $newPass = $_POST['newPass'];
+            $rePass = $_POST['rePass'];
+
+            //echo $newPass."--- ".$rePass;
+
+            if ($newPass == $rePass && $newPass != null && $rePass != null) {
+
+                $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
+                $newPass = addslashes(crypt($newPass, '$6$' . $salt));
+
+                $query = "UPDATE Users SET password='$newPass', salt='$salt' WHERE email='$email'";
+                if ($this->ObjDBConnection->UpdateQuery($query)) {
+                    echo "Y";
+                } else {
+                    echo "N";
+                }
+            } else {
+                echo "N";
+            }
+        } else {
+            echo "N";
+        }
+    }
+
     function UpdatePassword()
     {
 
@@ -358,5 +389,53 @@ class Users
             return false;
         }
 
+    }
+
+    function GetEmail($user_id)
+    {
+        $query = "SELECT email FROM Users WHERE user_id='$user_id'";
+        $row = $this->ObjDBConnection->SelectQuery($query);
+
+        return $row['email'];
+    }
+
+    function Auth($email, $password)
+    {
+        if ($email == null || $password == null) {
+            return false;
+        } else if ($this->EmailExists($email)) {
+
+            $query = "SELECT password, salt FROM Users WHERE email='$email'";
+            $row = $this->ObjDBConnection->SelectQuery($query);
+
+            $salt = $row['salt'];
+            $password = addslashes(crypt($password, '$6$' . $salt));
+
+            if ($password == $row['password'] && $password != null && $row != null) {
+                return true;
+            } else {
+                //echo "Returning false";
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    function ChangeEmail()
+    {
+        $oldEmail = $_POST['oldEmail'];
+        $newEmail = $_POST['email'];
+        $password = $_POST['password'];
+
+        if ($this->Auth($oldEmail, $password)) {
+
+            $query = "UPDATE Users SET email='$newEmail' WHERE email='$oldEmail'";
+            if ($this->ObjDBConnection->UpdateQuery($query)) {
+                echo "Y";
+            }
+        } else {
+            echo "N";
+        }
     }
 }
