@@ -71,11 +71,11 @@
 								</blockquote>
 							</div>
 						</div>
-						<div class="col-sm-6 fillers_max_768">
+						<div class="col-sm-7 col-lg-6 fillers_max_768">
 							<div class="item active">
-								<img id="kheyos_promo_img">
+								<img id="kheyos_promo_img" class="add_img_opacity_70">
 								<div class="carousel-caption">
-									<h3 id="kheyos_promo_img_quote"></h3>
+									<h3 id="kheyos_promo_img_quote" class="add_font_color_black"></h3>
 								</div>
 							</div>
 						
@@ -86,7 +86,7 @@
 									switch(random_number)
 									{
 										case 0:
-										return "Introduce a little anarchy. Upset the established order, and everything becomes chaos. I'm an agent of chaos. Oh, and you know the thing about chaos? It's fair! – The joker, <i>The Dark Knight</i>";
+										return "Introduce a little anarchy. Upset the established order, and everything becomes chaos. I'm an agent of chaos. Oh, and you know the thing about chaos? It's fair! – The Joker, <i>The Dark Knight</i>";
 										break;
 										
 										case 1:
@@ -126,7 +126,7 @@
 										break;              
 										
 										default:
-										return "Introduce a little anarchy. Upset the established order, and everything becomes chaos. I'm an agent of chaos. Oh, and you know the thing about chaos? It's fair! – The joker, <i>The Dark Knight</i>";
+										return "Introduce a little anarchy. Upset the established order, and everything becomes chaos. I'm an agent of chaos. Oh, and you know the thing about chaos? It's fair! – The Joker, <i>The Dark Knight</i>";
 
 									}
 								}
@@ -176,8 +176,8 @@
 								document.getElementById("kheyos_promo_img").src=kheyos_promo_img_choose();
 							</script>
 						</div>
-						<div class="col-sm-6">
-							<br/>
+						<div class="col-sm-5 col-lg-6">
+							<br class="fillers_max_1024"/>
 
                         <h2>Log In</h2>
 
@@ -186,7 +186,7 @@
                             <label class="checkbox">
                                 (Or <a href="register.php">Create an Account</a>)
                             </label>
-                            <br/>
+                            <br class="fillers_max_1000"/>
 
                             <div class="form-group">
                                 <input type="email" name="txtEmail" class="form-control" placeholder="Email address"
@@ -198,7 +198,7 @@
                                        required>
                                 <span class="help-block with-errors"></span>
                             </div>
-                            <br/>
+                            <br class="fillers_max_1000"/>
 
                             <div class="row">
                                 <div class="col-md-6">
@@ -207,12 +207,12 @@
                                     </label>
                                 </div>
                                 <div class="col-md-6">
-                                    <button class="btn btn-lg btn-primary btn-block" name="btnLogin" type="submit">Log
+                                    <button class="btn btn-lg btn-default btn-block" name="btnLogin" type="submit">Log
                                         in
                                     </button>
                                 </div>
                             </div>
-                            <br/>
+                            <br class="fillers_max_1000"/>
                             <label class="checkbox">
                                 <a href="forgot_password.php">Forgot your password?</a>
                             </label>
