@@ -22,8 +22,8 @@ class Users
     }
 
     function AuthVerify()
-    {
-        $email = $_POST['email'];
+    {	//update validating inputs to prevent sql injection
+        $email = addslashes($_POST['email']);
         $password = $_POST['password'];
 
         if ($email == null || $password == null) {
@@ -52,8 +52,8 @@ class Users
         $whiteList = array('token', 'txtEmail', 'txtPassword', 'btnLogin');
 
         if ($this->ObjProcessForm->FormPOST($form, 'btnLogin', $whiteList)) {
-
-            $email = $_POST['txtEmail'];
+			//update validating inputs to prevent sql injection
+            $email = addslashes($_POST['txtEmail']);
             if (!$this->EmailExists($email)) {
                 header('Location: login.php');
             } else {
@@ -73,7 +73,7 @@ class Users
                     header('Location: error.php');
                 } else if ($password == $row['password'] && $password != null && $row != null) {
                     $_SESSION['user_id'] = $row['user_id'];
-                    $_SESSION['email'] = $_POST['txtEmail'];
+                    $_SESSION['email'] = $_POST['txtEmail']);
 
                     $CountAvatar = $this->ObjAvatars->FirstAvatarCreatedCheck($row['user_id']);
 
@@ -100,8 +100,9 @@ class Users
         $whiteList = array('token', 'txtEmail', 'txtPassword', 'uid', 'btnLogin');
 
         if ($this->ObjProcessForm->FormPOST($form, 'btnLogin', $whiteList)) {
-
-            $query = "SELECT user_id, salt, password, active FROM Users WHERE email='$_POST[txtEmail]'";
+			//update validating inputs to prevent sql injection
+			$email=addslashes($_POST[txtEmail]);
+            $query = "SELECT user_id, salt, password, active FROM Users WHERE email='$email'";
             $result = mysqli_query($this->ObjDBConnection->link, $query);
             $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
@@ -144,8 +145,9 @@ class Users
             'txtRePassword',
             'btnRegister'
         );
-
-        if ($this->ObjProcessForm->FormPOST($form, 'btnRegister', $whiteList)) {
+		//update
+		//Validate email
+        if ($this->ObjProcessForm->FormPOST($form, 'btnRegister', $whiteList) && filter_var($_POST['txtEmail'], FILTER_VALIDATE_EMAIL)) {
 
             //$options['cost'] = 11;
             //$options['salt'] = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
@@ -158,7 +160,10 @@ class Users
             //$salt = $options['salt'];
 
             //Input is free from hacks. Now insert into DB.
-            $query = "INSERT INTO Users VALUES (DEFAULT, '$_POST[txtEmail]', '$password', '$salt', NOW(), NOW(), NOW(), '0')";
+			//Inputs is free from sql injection
+			//update			
+			$email=addslashes($_POST['txtEmail']);
+            $query = "INSERT INTO Users VALUES (DEFAULT, '$email', '$password', '$salt', NOW(), NOW(), NOW(), '0')";
 
             if (mysqli_query($this->ObjDBConnection->link, $query)) {
                 //temp session variables
@@ -180,8 +185,10 @@ class Users
 
         //Construct a link.
         $activation = md5(uniqid(rand(), true));
-
-        $query = "INSERT INTO UnverifiedUsers VALUES ('$_SESSION[email]','$activation', NOW())";
+		//Validating session values 
+		//update
+		$email_session=addslashes($_SESSION[email]);
+        $query = "INSERT INTO UnverifiedUsers VALUES ('$email_session','$activation', NOW())";
 
         if (mysqli_query($this->ObjDBConnection->link, $query)) {
 
@@ -213,6 +220,8 @@ class Users
 
     function ConfirmRegistration($email, $uid)
     {
+		//update
+		$email=addslashes($email);
         $query = "SELECT activation_code FROM UnverifiedUsers WHERE email ='$email'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -236,6 +245,9 @@ class Users
 
     function CheckActivation($email, $activation_code)
     {
+		//update
+		$email=addslashes($email);
+		$activation_code=addslashes($activation_code);
         $query = "SELECT COUNT(activation_code) AS count_activation_code FROM UnverifiedUsers WHERE email ='$email' AND activation_code='$activation_code'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -253,7 +265,7 @@ class Users
     {
 
 //        $email = filter_input($_POST['email'], FILTER_SANITIZE_EMAIL);
-        $email = $_POST['email'];
+        $email = addslashes($_POST['email']);
         if ($email == null) {
             echo "N";
         } else {
@@ -288,6 +300,8 @@ class Users
 
     function EmailExists($email)
     {
+		//update
+		$email=addslashes($email);
         $query = "SELECT COUNT(*) AS EntryCount FROM Users WHERE email='$email'";
         $row = $this->ObjDBConnection->SelectQuery($query);
 
@@ -300,9 +314,9 @@ class Users
 
     function CodeVerify()
     {
-
-        $email = $_POST['email'];
-        $code = $_POST['code'];
+		//update
+        $email = addslashes($_POST['email']);
+        $code = addslashes($_POST['code']);
 
         if ($code == null || $email == null) {
             echo "N";
@@ -334,7 +348,8 @@ class Users
 
                 $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
                 $newPass = addslashes(crypt($newPass, '$6$' . $salt));
-
+				//update
+				$email=addslashes($email);
                 $query = "UPDATE Users SET password='$newPass', salt='$salt' WHERE email='$email'";
                 if ($this->ObjDBConnection->UpdateQuery($query)) {
                     echo "Y";
@@ -351,19 +366,22 @@ class Users
 
     function UpdatePassword()
     {
-
-        $email = $_POST['email'];
+		
+		//update
+        $email = addslashes($_POST['email']);
         $password = $_POST['password'];
         $repassword = $_POST['repassword'];
-
+		//update
+		$user_id = $_SESSION['user_id'];
         if ($password != $repassword || $password == null || $email == null || $repassword == null) {
             echo "N";
         } else {
 
             $salt = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
             $password = addslashes(crypt($password, '$6$' . $salt));
-
-            $query = "UPDATE Users SET password = '$password', salt = '$salt' WHERE email='$email'";
+			//update
+			//Preventing users from changing other user's password.
+            $query = "UPDATE Users SET password = '$password', salt = '$salt' WHERE email='$email' and user_id='$user_id'";
             if ($this->ObjDBConnection->UpdateQuery($query)) {
                 $del_query = "DELETE FROM ResetPasswordUsers WHERE email='$email'";
                 if ($this->ObjDBConnection->DeleteQuery($del_query)) {
@@ -379,7 +397,8 @@ class Users
 
     function CheckResetCode($email, $code)
     {
-
+		//update
+		$email=addslashes($email);
         $query = "SELECT reset_code FROM ResetPasswordUsers WHERE email='$email'";
         $row = $this->ObjDBConnection->SelectQuery($query);
 
@@ -393,6 +412,7 @@ class Users
 
     function GetEmail($user_id)
     {
+		
         $query = "SELECT email FROM Users WHERE user_id='$user_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
 
@@ -400,7 +420,8 @@ class Users
     }
 
     function Auth($email, $password)
-    {
+    {   //update
+		$email=addslashes($email);
         if ($email == null || $password == null) {
             return false;
         } else if ($this->EmailExists($email)) {
@@ -424,13 +445,16 @@ class Users
 
     function ChangeEmail()
     {
-        $oldEmail = $_POST['oldEmail'];
-        $newEmail = $_POST['email'];
+		//update
+        $oldEmail = addslashes($_POST['oldEmail']);
+        $newEmail = addslashes($_POST['email']);
         $password = $_POST['password'];
-
+		//update
+		$user_id = $_SESSION['user_id'];
         if ($this->Auth($oldEmail, $password)) {
-
-            $query = "UPDATE Users SET email='$newEmail' WHERE email='$oldEmail'";
+			//update
+			//preventing users from taking control of other user's account through their email ID.
+            $query = "UPDATE Users SET email='$newEmail' WHERE email='$oldEmail' and user_id='$user_id'";
             if ($this->ObjDBConnection->UpdateQuery($query)) {
                 echo "Y";
             }
