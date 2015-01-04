@@ -5,7 +5,9 @@
  * Date: 5/7/14
  * Time: 9:04 AM
  */
-
+/*
+Updated by Laxman
+*/
 session_start();
 
 require_once 'ProcessForm.php';
@@ -42,10 +44,13 @@ class Avatars
         //if ($this->ObjProcessForm->FormPOST($form, 'btnCreate', $whiteList)) {
 
         $user_id = $_SESSION['user_id'];
+		//update
         $bio = addslashes($_POST['txtBio']);
+		$txtName=addslashes($_POST['txtName']);
+		$txtHandle=addslashes($_POST['txtHandle']);
 
         //Input is free from hacks. Now insert into DB.
-        $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$_POST[txtName]', '$_POST[txtHandle]', '$bio', NOW())";
+        $query = "INSERT INTO Avatars VALUES (DEFAULT, '$user_id', '$txtName', '$txtHandle', '$bio', NOW())";
 
         if (mysqli_query($this->ObjDBConnection->link, $query)) {
 
@@ -107,17 +112,19 @@ class Avatars
         //var_dump($_POST);
 
         if ($this->ObjProcessForm->FormPOST($form, 'btnEdit', $whiteList)) {
-
-            $avatar_id = $_POST['avatar_id'];
+			//update
+            $avatar_id = addslashes($_POST['avatar_id']);
             $_SESSION['avatar_id'] = $avatar_id;
 
             $objPictures = new Pictures();
             $picture_id = $objPictures->UploadProfilePicture();
-
+			
             $bio = addslashes($_POST['txtBio']);
 
             // Input is free from hacks. Now insert into DB.
-            $query = "UPDATE Avatars SET name = '$_POST[txtName]', bio = '$bio' WHERE avatar_id='$avatar_id'";
+			//update
+			$txtName=addslashes($_POST['txtName']);
+            $query = "UPDATE Avatars SET name = '$txtName', bio = '$bio' WHERE avatar_id='$avatar_id'";
             if (mysqli_query($this->ObjDBConnection->link, $query)) {
 
                 $objFollow = new Follow();
@@ -200,6 +207,8 @@ class Avatars
 
     function UsernameExists($handle)
     {
+		//update
+		$handle=addslashes($handle);
         $query = "SELECT COUNT(handle) AS EntryCount FROM Avatars WHERE handle='$handle'";
         $row = $this->ObjDBConnection->SelectQuery($query);
 
@@ -212,6 +221,8 @@ class Avatars
 
     function GetAvatarIdFromHandle($handle)
     {
+		//update
+		$handle=addslashes($handle);		
         $query = "SELECT avatar_id FROM Avatars WHERE handle='$handle'";
         $row = $this->ObjDBConnection->SelectQuery($query);
         return $row['avatar_id'];
