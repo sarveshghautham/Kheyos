@@ -1,23 +1,32 @@
 package ServerEngine
 import java.sql.Timestamp
 import java.util.Date
+import java.util.concurrent.LinkedBlockingDeque
 
 import Messages._
 import akka.actor.{Actor, Props, ActorSystem, ActorRef}
 import akka.routing.RoundRobinRouter
+import spray.routing.SimpleRoutingApp
+
+import org.json4s.{DefaultFormats, Formats}
+import org.json4s.JsonAST.JObject
+import spray.httpx.Json4sSupport
 import spray.routing._
 import spray.http.MediaTypes
+import scala.actors.threadpool.LinkedBlockingQueue
 import scala.concurrent.duration._
 import akka.util.Timeout
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 import akka.pattern.ask
 
-object Server extends App with SimpleRoutingApp {
+object Server extends App with SimpleRoutingApp with Json4sSupport {
   implicit val system = ActorSystem("KheyosServer")
   implicit val serverActor =  system.actorOf(Props[ServerActor].withRouter(RoundRobinRouter(10)) , name = "ServerActor")
+
   implicit val timeout = Timeout(1.second)
   import system.dispatcher
+  implicit def json4sFormats: Formats = DefaultFormats
 
   def getJson(route : Route) = get {
     respondWithMediaType(MediaTypes.`application/json`) { route }
@@ -73,6 +82,17 @@ object Server extends App with SimpleRoutingApp {
           (serverActor ? GetAllMyStatuses(avatarId)).mapTo[ListBuffer[Status]].map(s => ServerActor.toJson(s))
         }
       }
+    } ~
+    post {
+      path("update"){
+        entity(as[StatusJSON]) { statusObj =>
+          //val status = statusObj.extract[Status]
+          serverActor ? PostStatus(statusObj.avatarId, statusObj.pictureId, statusObj.status)
+          complete {
+            "OK"
+          }
+        }
+      }
     }
   }
 
@@ -89,6 +109,8 @@ object ServerActor {
   var avatarMap : Map[Int, Avatars] = Map()
   //Status ID and status object mapping
   var statusMap : Map[Int, Status] = Map()
+  //DB Connection
+  val db : DbCon = new DbCon()
 
   import org.json4s.native.Serialization.{writePretty}
   import org.json4s.{ FieldSerializer, DefaultFormats }
@@ -183,19 +205,29 @@ class ServerActor extends Actor {
   def getAllMyStatuses(avatarId : Int) : ListBuffer[Status] = {
 
     //TODO: Fetch avatarObj and do. This is only for test purpose
-    val db : DbCon = new DbCon()
-    db.connect
-    val res = db.dbGetStatus(avatarId)
+    ServerActor.db.connect
+    val res = ServerActor.db.dbGetStatus(avatarId)
     return res
 
   }
 
-  def Login(userId : Int) = {
-    println("Login => UserID is: "+userId)
+  def Login(avatarId : Int) = {
+    println("Login => UserID is: "+avatarId)
+
+    val tempDb = ServerActor.db
+    tempDb.connect
+    val followers = tempDb.dbGetFollowers(avatarId)
+
+    tempDb.connect
+    val statusQueue : LinkedBlockingQueue[Int] = tempDb.dbNewsFeed(avatarId)
+    val avatarObj = new Avatars(avatarId, followers, statusQueue, 0)
+
+    if (ServerActor.avatarMap.contains(avatarId))
+      ServerActor.avatarMap += (avatarId -> avatarObj)
   }
 
-  def Logout(userId : Int) = {
-
+  def Logout(avatarId : Int) = {
+    ServerActor.avatarMap -= avatarId
   }
 
 }

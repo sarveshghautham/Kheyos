@@ -1,24 +1,26 @@
 package ServerEngine
+
+import ServerEngine.Messages.GetActiveStatus
+
 import scala.actors.threadpool.LinkedBlockingQueue
 import scala.collection.mutable.ListBuffer
 
 /**
  * Created by sarvesh on 12/29/14.
  */
-class Avatars(avatar_id : Int) {
+class Avatars(avatar_id : Int, followersList : ListBuffer[Int], filledStatusQueue : LinkedBlockingQueue[Int], activeStatusId: Int) {
 
   private val avatarId : Int = avatar_id
-  private var followers : ListBuffer[Int] = ListBuffer.empty[Int]
-  private val messageQueue = new LinkedBlockingQueue[Int](100)
-  private var activeStatus : Int = 0
-
+  private var followers : ListBuffer[Int] = followersList
+  private val statusQueue = filledStatusQueue
+  private var activeStatus : Int = activeStatusId
 
   def getFollowers : ListBuffer[Int] = {
     return followers
   }
 
   def getMessages : List[Int] = {
-    return messageQueue.toArray().toList.asInstanceOf[List[Int]]
+    return statusQueue.toArray().toList.asInstanceOf[List[Int]]
   }
 
   def addFollower (followerId : Int) = {
@@ -31,11 +33,11 @@ class Avatars(avatar_id : Int) {
 
   def addStatusToQueue(statusId : Int) =  {
 
-    if (messageQueue.size() >= 100)
-      messageQueue.poll()
+    if (statusQueue.size() >= 100)
+      statusQueue.poll()
 
     //Put in the queue
-    messageQueue.offer(statusId)
+    statusQueue.offer(statusId)
     setMyActiveStatus(statusId)
   }
 

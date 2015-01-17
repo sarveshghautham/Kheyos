@@ -13,4 +13,5 @@ object Messages {
   case class GetMyFeed(avatarId : Int) extends KheyosMessage
   case class addFollower(avatarId1 : Int, avatarId2 : Int) extends KheyosMessage
   case class deleteFollower(avatarId1 : Int, avatarId2 : Int) extends KheyosMessage
+  case class StatusJSON(avatarId : Int, pictureId : Int, status : String) extends KheyosMessage
 }

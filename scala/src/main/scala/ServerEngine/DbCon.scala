@@ -1,4 +1,8 @@
 package ServerEngine
+
+import java.util.concurrent.LinkedBlockingDeque
+
+import scala.actors.threadpool.LinkedBlockingQueue
 import scala.collection.mutable.ListBuffer
 
 //object db {
@@ -45,7 +49,21 @@ class DbCon {
     }
   }
 
+  def selectQuery(query : String): ResultSet = {
+    try {
+      // Configure to be Read Only
+      val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
+      // Execute Query
+      val rs = statement.executeQuery(query)
+      return rs;
+    }
+    finally {
+      conn.close
+    }
+  }
 
+
+  //Test method
   def dbGetStatus(avatarId : Int) : ListBuffer[Status] = {
     try {
       // Configure to be Read Only
@@ -68,6 +86,51 @@ class DbCon {
     }
   }
 
+  def dbGetFollowers (avatarId : Int): ListBuffer[Int] = {
+    try {
+      // Configure to be Read Only
 
+      val query : String = "SELECT * FROM Status WHERE avatar_id="+avatarId
+      // Execute Query
+      val rs = selectQuery(query)
+
+      var result : ListBuffer[Int] = ListBuffer.empty[Int]
+
+      // Iterate Over ResultSet
+      while (rs.next) {
+        result += rs.getInt("avatar_id_2")
+      }
+
+      return result
+    }
+    finally {
+      conn.close
+    }
+  }
+
+  def dbNewsFeed (avatarId : Int) : LinkedBlockingQueue[Int] = {
+    val statusQueue : LinkedBlockingQueue[Int] = new LinkedBlockingQueue[Int]
+
+    val query = "SELECT * FROM Status " +
+      "WHERE avatar_id IN " +
+      "(SELECT avatar_id_2 " +
+      "FROM follow " +
+      "WHERE avatar_id_1 = 'avatarId')" +
+      "ORDER BY time DESC" +
+      "LIMIT 100";
+
+
+    val rs = selectQuery(query)
+
+    while (rs.next) {
+      val statusId = rs.getInt("status_id")
+      val statusObj = new Status(statusId, rs.getInt("avatar_id"), rs.getInt("""picture_id"""), rs.getBoolean("active"), rs.getString("text"), rs.getTimestamp("time"))
+      if (!ServerActor.statusMap.contains(statusId))
+        ServerActor.statusMap += (statusId -> statusObj)
+      statusQueue.offer(statusId)
+    }
+
+    return statusQueue
+  }
 
 }
