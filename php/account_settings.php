@@ -188,7 +188,7 @@ require_once 'navbar.php';
                     <div class="form-group">
                         <div class="col-sm-12">
                             <label>Current Email Address</label>
-                            <input class="form-control" id="oldEmail" name="txtOldEmail" value="<?php echo $email; ?>"
+                            <input class="form-control" id="oldEmail" name="txtOldEmail" value="<?php echo htmlspecialchars($email); ?>"
                                    disabled>
                             <span class="help-block with-errors"></span>
                         </div>
