@@ -4,10 +4,9 @@
  * User: sarvesh
  * Date: 5/7/14
  * Time: 9:04 AM
+ * Last edited : 29/1/2015
  */
-/*
-Updated by Laxman
-*/
+
 session_start();
 
 require_once 'ProcessForm.php';
@@ -153,7 +152,9 @@ class Avatars
 
     function FirstAvatarCreatedCheck($user_id)
     {
-        $query = "SELECT COUNT(avatar_id) AS AvatarCount FROM Avatars WHERE user_id = '$user_id'";
+	    //update
+        $avatar_id = addslashes($user_id);
+        $query = "SELECT COUNT(avatar_id) AS AvatarCount FROM Avatars WHERE user_id = '$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
@@ -162,8 +163,8 @@ class Avatars
     }
 
     function GetAvatarInfo($avatar_id)
-    {
-
+    {   //update
+		$avatar_id = addslashes($avatar_id);
         $query = "SELECT * FROM Avatars WHERE avatar_id = '$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -172,8 +173,8 @@ class Avatars
     }
 
     function AvatarList($user_id)
-    {
-
+    {	//update
+		$user_id = addslashes($user_id);
         $query = "SELECT avatar_id FROM Avatars WHERE user_id='$user_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $i = 0;
@@ -188,7 +189,8 @@ class Avatars
     }
 
     function GetHandle($avatar_id)
-    {
+    {	//update
+		$avatar_id = addslashes($avatar_id);
         $query = "SELECT handle FROM Avatars WHERE avatar_id='$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -197,7 +199,8 @@ class Avatars
     }
 
     function GetUserId($avatar_id)
-    {
+    {	//update
+		$avatar_id = addslashes($avatar_id);
         $query = "SELECT user_id FROM Avatars WHERE avatar_id='$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -229,7 +232,8 @@ class Avatars
     }
 
     function GetHandleFromAvatarId($avatar_id)
-    {
+    {	//update
+		$avatar_id = addslashes($avatar_id);
         $query = "SELECT handle FROM Avatars WHERE avatar_id='$avatar_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
         return $row['handle'];
