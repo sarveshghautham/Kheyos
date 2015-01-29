@@ -18,7 +18,7 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
     ?>
 
     <div class="edit-avatar-form col-sm-8" id="<?php echo $avatar_info['handle']; ?>">
-        <h3 class="text-center">Edit Avatar: <span class="text-muted"><?php echo $avatar_info['name']; ?></span></h3>
+        <h3 class="text-center">Edit Avatar: <span class="text-muted"><?php echo htmlspecialchars($avatar_info['name']); ?></span></h3>
         <br/>
 
         <form class="form-horizontal" role="form" enctype="multipart/form-data" name="EditAvatarForm" method="POST"
@@ -44,7 +44,7 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
                 <label class="col-sm-3 control-label">Name</label>
 
                 <div class="col-sm-9">
-                    <input class="form-control" name="txtName" value="<?php echo $avatar_info['name']; ?>">
+                    <input class="form-control" name="txtName" value="<?php echo htmlspecialchars($avatar_info['name']); ?>">
                 </div>
             </div>
 
@@ -62,7 +62,7 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
                 <label class="col-sm-3 control-label">Bio</label>
 
                 <div class="col-sm-9">
-                    <textarea name="txtBio" class="form-control" rows="4"><?php echo $avatar_info['bio']; ?></textarea>
+                    <textarea name="txtBio" class="form-control" rows="4"><?php echo htmlspecialchars($avatar_info['bio']); ?></textarea>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
                                         <img src="/get_profile_pic.php?picture_id=<?php echo $my_picture_id; ?>"/>
                                     </div>
                                     <?php
-                                    echo $my_avatar_info['name'];
+                                    echo htmlspecialchars($my_avatar_info['name']);
                                     ?>
                                 </label>
                             </div>
