@@ -73,6 +73,7 @@ class Pictures
 
     function GetProfilePicture($picture_id)
     {
+		$picture_id=addslashes($picture_id);
         $query = "SELECT * FROM Pictures WHERE picture_id = '$picture_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -82,7 +83,7 @@ class Pictures
 
     function GetProfilePictureId($avatar_id)
     {
-
+		$avatar_id=addslashes($avatar_id);
         $query = "SELECT picture_id FROM Pictures WHERE avatar_id='$avatar_id' AND active='1' AND profile_pic='1'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -112,10 +113,10 @@ class Pictures
 
             move_uploaded_file($tmpName, $path);
 
-            $type = $_FILES['statusPic']['type'];
+            $type = addslashes($_FILES['statusPic']['type']);
             $_SESSION['prev_pic_id'] = $this->GetCoverPictureId($avatar_id);
 
-            $avatar_id = $_POST['radioAvatars'];
+            $avatar_id = addslashes($_POST['radioAvatars']);
             //for ($i = 0; $i < count($avatar_ids); $i++) {
             $prev_pic_id = $this->GetCoverPictureId($avatar_id);
             $disable_old_pic = "UPDATE Pictures SET active='0' WHERE picture_id='$prev_pic_id' AND profile_pic='0'";
@@ -138,7 +139,7 @@ class Pictures
 
     function GetCoverPictureId($avatar_id)
     {
-
+		$avatar_id=addslashes($avatar_id);
         $query = "SELECT picture_id FROM Pictures WHERE avatar_id='$avatar_id' AND active='1' AND profile_pic='0'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -148,6 +149,7 @@ class Pictures
 
     function GetPicTimeStamp($picture_id)
     {
+		$picture_id=addslashes($picture_id);
         $query = "SELECT dateUploaded FROM Pictures WHERE picture_id='$picture_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -303,13 +305,14 @@ class Pictures
 
     function DeletePic($picture_id)
     {
+		$picture_id=addslashes($picture_id);	
         $query = "DELETE FROM Pictures WHERE picture_id='$picture_id'";
         mysqli_query($this->ObjDBConnection->link, $query);
 
         $image_path = $_SESSION['path'];
         unlink($image_path);
 
-        $picture_id = $_SESSION['prev_pic_id'];
+        $picture_id = addslashes($_SESSION['prev_pic_id']);
         $query = "UPDATE Pictures SET active='1' WHERE picture_id='$picture_id'";
         mysqli_query($this->ObjDBConnection->link, $query);
 
@@ -324,6 +327,7 @@ class Pictures
 
     function GetAllCoverPictureIds($avatar_id)
     {
+		$avatar_id=addslashes($avatar_id);
         $i = 0;
         $query = "SELECT picture_id FROM Pictures WHERE avatar_id='$avatar_id' AND profile_pic='0' ORDER BY dateUploaded DESC";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
@@ -337,7 +341,7 @@ class Pictures
 
     function GetAllCoverPictureIdsList($user_id)
     {
-
+		$user_id=addslashes($user_id);
         $i = 0;
 
         $query = "SELECT DISTINCT picture_id, MAX(dateUploaded) AS temp FROM Pictures
@@ -361,6 +365,7 @@ class Pictures
 
     function GetAvatarId($picture_id)
     {
+		$picture_id=addslashes($picture_id);
         $query = "SELECT avatar_id FROM Pictures WHERE picture_id = '$picture_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
 
@@ -369,7 +374,8 @@ class Pictures
 
     function CheckPictureAccess($user_id, $picture_id)
     {
-
+		$picture_id=addslashes($picture_id);
+		$user_id=addslashes($user_id);
         $query = "SELECT picture_id FROM Pictures
                   WHERE (avatar_id IN
                   (SELECT avatar_id FROM Avatars
@@ -423,10 +429,10 @@ class Pictures
 
                 move_uploaded_file($tmpName, $path);
 
-                $type = $_FILES['coverPicture']['type'];
+                $type = addslashes($_FILES['coverPicture']['type']);
                 $_SESSION['prev_pic_id'] = $this->GetCoverPictureId($avatar_id);
 
-                $avatar_ids = $_POST['chkAvatars'];
+                $avatar_ids = addslashes($_POST['chkAvatars']);
                 for ($i = 0; $i < count($avatar_ids); $i++) {
                     $prev_pic_id = $this->GetCoverPictureId($avatar_ids[$i]);
                     $disable_old_pic = "UPDATE Pictures SET active='0' WHERE picture_id='$prev_pic_id' AND profile_pic='0'";
