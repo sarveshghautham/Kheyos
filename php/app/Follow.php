@@ -4,6 +4,7 @@
  * User: sarvesh
  * Date: 5/22/14
  * Time: 12:28 AM
+ * Last Edited: 29/1/2015
  */
 
 session_start();
@@ -38,13 +39,13 @@ class Follow
         //if ($this->ObjProcessForm->FormPOST($form, 'btnFollow', $whiteList)) {
 
         $myAvatarIds = $_POST['my_avatar_ids'];
-        $avatar_id = $_POST['avatar_id'];
+        $avatar_id = addslashes($_POST['avatar_id']);
 
         $my_avatar_count = $_POST['my_avatar_count'];
 
         //For unfollow
         for ($i = 0; $i < $my_avatar_count; $i++) {
-            $my_avatar_id = $_POST['my_avatar_id_' . $i];
+            $my_avatar_id = addslashes($_POST['my_avatar_id_' . $i]);
 
             if ($myAvatarIds != null) {
                 if (!in_array($my_avatar_id, $myAvatarIds)) {
@@ -67,7 +68,7 @@ class Follow
 
         //For follow
         for ($i = 0; $i < count($myAvatarIds); $i++) {
-
+			$myAvatarIds[$i]=addslashes($myAvatarIds[$i]);
             $CheckQuery = "SELECT COUNT(*) AS CheckFollow FROM Follow WHERE avatar_id_1='$myAvatarIds[$i]' AND avatar_id_2='$avatar_id'";
             $row = $this->ObjDBConnection->SelectQuery($CheckQuery);
 
@@ -94,7 +95,7 @@ class Follow
     {
 
         $myAvatarIds = $_POST['my_avatar_ids'];
-        $avatar_id = $_POST['avatar_id'];
+        $avatar_id = addslashes($_POST['avatar_id']);
 
         //var_dump($myAvatarIds);
         //echo "<br>";
@@ -103,7 +104,7 @@ class Follow
 
         //For unfollow
         for ($i = 0; $i < $my_avatar_count; $i++) {
-            $my_avatar_id = $_POST['my_avatar_id_' . $i];
+            $my_avatar_id = addslashes($_POST['my_avatar_id_' . $i]);
 
             if ($myAvatarIds != null) {
                 if (!in_array($my_avatar_id, $myAvatarIds)) {
@@ -126,7 +127,7 @@ class Follow
 
         //For follow
         for ($i = 0; $i < count($myAvatarIds); $i++) {
-
+			$myAvatarIds[$i]=addslashes($myAvatarIds[$i]);
             $CheckQuery = "SELECT COUNT(*) AS CheckFollow FROM Follow WHERE avatar_id_1='$myAvatarIds[$i]' AND avatar_id_2='$avatar_id'";
             $row = $this->ObjDBConnection->SelectQuery($CheckQuery);
 
@@ -146,6 +147,8 @@ class Follow
 
     public function GetMyFollowingAvatars($myAvatarList, $avatar_id)
     {
+	$myAvatarList[$i]=addslashes($myAvatarList[$i]);
+	$avatar_id=addslashes($avatar_id);
         $j = 0;
         for ($i = 0; $i < count($myAvatarList); $i++) {
             $query = "SELECT COUNT(*) AS Following FROM Follow WHERE (avatar_id_1='$myAvatarList[$i]' AND avatar_id_2='$avatar_id')";
@@ -163,6 +166,8 @@ class Follow
 
     function FollowingFrom($avatar_id, $my_avatar_id)
     {
+	$my_avatar_id=addslashes($my_avatar_id);
+	$avatar_id=addslashes($avatar_id);
         $j = 0;
         $query = "SELECT avatar_id_1 FROM Follow WHERE avatar_id_1='$my_avatar_id' AND avatar_id_2='$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
@@ -176,7 +181,7 @@ class Follow
 
     public function GetMyFollowers($avatar_id)
     {
-
+	$avatar_id=addslashes($avatar_id);
         $j = 0;
         $query = "SELECT avatar_id_1 FROM Follow WHERE avatar_id_2='$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
@@ -191,7 +196,7 @@ class Follow
 
     public function GetMyFollowing($avatar_id)
     {
-
+	$avatar_id=addslashes($avatar_id);
         $j = 0;
         $query = "SELECT avatar_id_2 FROM Follow WHERE avatar_id_1='$avatar_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
@@ -206,7 +211,7 @@ class Follow
 
     public function MyFollowersCount($avatar_id)
     {
-
+	$avatar_id=addslashes($avatar_id);
         $query = "SELECT COUNT(*) AS FollowersCount FROM Follow WHERE avatar_id_2='$avatar_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
         return $row['FollowersCount'];
@@ -214,7 +219,7 @@ class Follow
 
     public function MyFollowingCount($avatar_id)
     {
-
+	$avatar_id=addslashes($avatar_id);
         $query = "SELECT COUNT(*) AS FollowingCount FROM Follow WHERE avatar_id_1='$avatar_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
         return $row['FollowingCount'];
@@ -223,6 +228,7 @@ class Follow
 
     public function GetAllFollowers($avatar_ids)
     {
+		$avatar_ids[$i]=addslashes($avatar_ids[$i]);
         $j = 0;
         //My avatar ids - $avatar_ids
         for ($i = 0; $i < count($avatar_ids); $i++) {
@@ -245,6 +251,7 @@ class Follow
 
     public function GetFollowActivity($user_id)
     {
+	$user_id=addslashes($user_id);
         $query = "SELECT * FROM Follow
                   WHERE (avatar_id_1 IN
                   (SELECT avatar_id FROM Avatars
@@ -276,7 +283,7 @@ class Follow
 
     public function GetFollowActivityForAvatar($avatar_id)
     {
-
+	$avatar_id=addslashes($avatar_id);
         $query = "SELECT * FROM Follow
                   WHERE avatar_id_1 = '$avatar_id'
                   OR
@@ -297,6 +304,7 @@ class Follow
 
     public function GetFollowTimeStamp($follow_id)
     {
+		$follow_id=addslashes($follow_id);
         $query = "SELECT time FROM Follow WHERE follow_id='$follow_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
         return $row['time'];
@@ -304,6 +312,7 @@ class Follow
 
     public function GetFollowInfo($follow_id)
     {
+		$follow_id=addslashes($follow_id);
         $query = "SELECT * FROM Follow WHERE follow_id = '$follow_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
         return $row;
