@@ -56,12 +56,12 @@ for ($i = 0; $i < count($avatar_ids); $i++) {
                     <img alt="<?php echo "@" . $avatar_info['handle']; ?>"
                          src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
                 </div>
-                <h4><?php echo $avatar_info['name']; ?></h4>
+                <h4><?php echo htmlspecialchars($avatar_info['name']); ?></h4>
                 <h5><?php echo "@" . $avatar_info['handle']; ?></h5>
             </div>
             <div class="col-xs-12 post_display_block">
 	        	<span class="add_word_wrap_break_word">
-	            <?php echo $avatar_info['bio']; ?>
+	            <?php echo htmlspecialchars($avatar_info['bio']); ?>
 	            	</span>
             </div>
             <div class="col-xs-12 post_display_block">
