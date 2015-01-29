@@ -4,6 +4,7 @@
  * User: sarvesh
  * Date: 5/12/14
  * Time: 7:05 PM
+ * Last Edited: 29/1/2015
  */
 
 require_once 'app/DBConnection.php';
@@ -36,9 +37,9 @@ class Status
 
         if ($this->ObjProcessForm->FormPOST($form, 'btnUpdate', $whiteList)) {
 
-            $avatar_id = $_POST['radioAvatars'];
-            $bgColor = $_POST['selBgColor'];
-            $fontColor = $_POST['selFontColor'];
+            $avatar_id = addslashes($_POST['radioAvatars']);
+            $bgColor = addslashes($_POST['selBgColor']);
+            $fontColor = addslashes($_POST['selFontColor']);
             $status = addslashes($_POST['txtStatus']);
 
             $picture_id = 0;
@@ -73,7 +74,7 @@ class Status
 
     function GetStatus($avatar_id)
     {
-
+		$avatar_id=addslashes($avatar_id);
         $query = "SELECT * FROM Status WHERE avatar_id='$avatar_id' AND active='1'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -83,6 +84,7 @@ class Status
 
     function GetActiveStatusId($avatar_id)
     {
+		$avatar_id=addslashes($avatar_id);
         $query = "SELECT status_id FROM Status WHERE avatar_id='$avatar_id' AND active='1'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -92,7 +94,7 @@ class Status
 
     function GetAllStatusIds($avatar_id)
     {
-
+		$avatar_id=addslashes($avatar_id);
         $i = 0;
         $query = "SELECT status_id FROM Status WHERE avatar_id='$avatar_id' ORDER BY time DESC";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
@@ -106,7 +108,7 @@ class Status
 
     function GetStatusTimeStamp($status_id)
     {
-
+		$status_id=addslashes($status_id);
         $query = "SELECT time FROM Status WHERE status_id = '$status_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -116,6 +118,7 @@ class Status
 
     function GetStatusInfo($status_id)
     {
+		$status_id=addslashes($status_id);
         $query = "SELECT * FROM Status WHERE status_id='$status_id'";
         $result = mysqli_query($this->ObjDBConnection->link, $query);
         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
@@ -127,7 +130,7 @@ class Status
     {
 
         $i = 0;
-
+		$user_id=addslashes($user_id);
         $query = "SELECT DISTINCT status_id, MAX(time) AS temp FROM Status
                   WHERE (avatar_id IN
                   (SELECT DISTINCT avatar_id_2 FROM Follow
@@ -152,6 +155,7 @@ class Status
 
     function GetAvatarId($status_id)
     {
+		$status_id=addslashes($status_id);
         $query = "SELECT avatar_id FROM Status WHERE status_id = '$status_id'";
         $row = $this->ObjDBConnection->SelectQuery($query);
 
