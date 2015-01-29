@@ -62,7 +62,7 @@ require_once 'navbar.php';
         <div class="col-sm-4 text-center">
             <h4>
                 <a href="../<?php echo $avatar_info['handle']; ?>">
-                    <?php echo $avatar_info['name']; ?><br/>
+                    <?php echo htmlspecialchars($avatar_info['name']); ?><br/>
                 </a>
                 <span class="text-muted">Followers</span>
             </h4>
@@ -100,13 +100,13 @@ require_once 'navbar.php';
                                 ?>
                             </div>
                         <span class="add_font_size_18">
-                        <?php echo $follower_info['name']; ?>
+                        <?php echo htmlspecialchars($follower_info['name']); ?>
                         </span>
                         </a>
 
                         <p>
                         <span class="add_word_wrap_break_word fillers_max_768">
-                        <?php echo $follower_info['bio']; ?>
+                        <?php echo htmlspecialchars($follower_info['bio']); ?>
                         </span>
                         </p>
 
