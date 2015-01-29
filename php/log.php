@@ -74,7 +74,7 @@ if ($_SESSION['user_id'] == null) {
         <div class="row">
             <div class="col-sm-4 text-center">
                 <h4>
-                    <?php echo $avatar_info['name']; ?><br/>
+                    <?php echo htmlspecialchars($avatar_info['name']); ?><br/>
                     <span class="text-muted">The Activity Log</span>
                 </h4>
                 <hr class="fillers_min_768"/>
@@ -133,7 +133,7 @@ if ($_SESSION['user_id'] == null) {
                                             <p class="text-center"
                                                style="color: <?php echo $status_info['font_color']; ?>;">
                                                 <!-- Font Colour from form -->
-                                                <?php echo $status_info['text']; ?>
+                                                <?php echo htmlspecialchars($status_info['text']); ?>
                                             </p>
                                         </div>
                                     </div>
