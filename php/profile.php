@@ -148,7 +148,7 @@ if (isset ($_POST['btnFollow'])) {
         <div class="row">
             <div class="col-sm-4">
                 <div class="well well-sm col-sm-12">
-                    <h4><?php echo $avatar_info['name']; ?></h4>
+                    <h4><?php echo htmlspecialchars($avatar_info['name']); ?></h4>
                     <h5>Followed with <?php echo count($follow_avatar_list); ?> Avatars</h5>
                 </div>
                 <form id="FollowForm" name="FollowForm" method="POST" action="profile.php">
@@ -185,7 +185,7 @@ if (isset ($_POST['btnFollow'])) {
                                         <img src="get_profile_pic.php?picture_id=<?php echo $my_picture_id; ?>"/>
                                     </div>
                                     <?php
-                                    echo $my_avatar_info['name'];
+                                    echo htmlspecialchars($my_avatar_info['name']);
                                     ?>
                                 </label>
                             </div>
@@ -208,7 +208,7 @@ if (isset ($_POST['btnFollow'])) {
                         <div class="imgLiquidFill imgLiquid default_profile_35 add_display_inline_block">
                             <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
                         </div>
-                        <h4><?php echo $avatar_info['name']; ?></h4>
+                        <h4><?php echo htmlspecialchars($avatar_info['name']); ?></h4>
                         <h5><?php echo "@" . $avatar_info['handle']; ?></h5>
 	            	<span class="add_word_wrap_break_word">
 	                <?php echo $avatar_info['bio']; ?>
@@ -250,7 +250,7 @@ if (isset ($_POST['btnFollow'])) {
                                         <p class="text-center"
                                            style="color: <?php echo $status_info['font_color']; ?>;">
                                             <!-- Font Colour from form -->
-                                            <?php echo $status_info['text']; ?>
+                                            <?php echo htmlspecialchars($status_info['text']); ?>
                                         </p>
                                     </div>
                                 </div>
