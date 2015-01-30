@@ -58,7 +58,7 @@ class DbCon {
       return rs;
     }
     finally {
-      conn.close
+      //conn.close
     }
   }
 
@@ -90,7 +90,7 @@ class DbCon {
     try {
       // Configure to be Read Only
 
-      val query : String = "SELECT * FROM Status WHERE avatar_id="+avatarId
+      val query : String = "SELECT * FROM Follow WHERE avatar_id_1="+avatarId
       // Execute Query
       val rs = selectQuery(query)
 
@@ -108,17 +108,23 @@ class DbCon {
     }
   }
 
+  def getOneStatus (statusId : Int) : Status = {
+    val query = "SELECT * FROM Status WHERE status_id="+statusId;
+    val rs = selectQuery(query)
+    var statusObj : Status = null
+    while (rs.next) {
+      val statusId = rs.getInt("status_id")
+      statusObj = new Status(statusId, rs.getInt("avatar_id"), rs.getInt("""picture_id"""), rs.getBoolean("active"), rs.getString("text"), rs.getTimestamp("time"))
+      if (!ServerActor.statusMap.contains(statusId))
+        ServerActor.statusMap += (statusId -> statusObj)
+    }
+
+    return statusObj;
+  }
+
   def dbNewsFeed (avatarId : Int) : LinkedBlockingQueue[Int] = {
     val statusQueue : LinkedBlockingQueue[Int] = new LinkedBlockingQueue[Int]
-
-    val query = "SELECT * FROM Status " +
-      "WHERE avatar_id IN " +
-      "(SELECT avatar_id_2 " +
-      "FROM follow " +
-      "WHERE avatar_id_1 = 'avatarId')" +
-      "ORDER BY time DESC" +
-      "LIMIT 100";
-
+    val query = "SELECT * FROM Status WHERE avatar_id IN (SELECT avatar_id_2 FROM Follow WHERE avatar_id_1 ="+avatarId+") ORDER BY time DESC LIMIT 100";
 
     val rs = selectQuery(query)
 

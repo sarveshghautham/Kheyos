@@ -42,12 +42,23 @@ object Server extends App with SimpleRoutingApp with Json4sSupport {
     } ~
     post {
       path("post" / "login") {
-        parameters("user_id".as[Int]) {
-          (userId) =>
-          (serverActor ? Login(userId))
-          complete {
-            "OK"
-          }
+        parameters("avatar_id".as[Int]) {
+          (avatarId) =>
+            (serverActor ? Login(avatarId))
+            complete {
+              "OK"
+            }
+        }
+      }
+    } ~
+    post {
+      path("post" / "logout") {
+        parameters("avatar_id".as[Int]) {
+          (avatarId) =>
+            (serverActor ? Logout(avatarId))
+            complete {
+              "OK"
+            }
         }
       }
     } ~
@@ -84,7 +95,7 @@ object Server extends App with SimpleRoutingApp with Json4sSupport {
       }
     } ~
     post {
-      path("update"){
+      path("post_status"){
         entity(as[StatusJSON]) { statusObj =>
           //val status = statusObj.extract[Status]
           serverActor ? PostStatus(statusObj.avatarId, statusObj.pictureId, statusObj.status)
@@ -172,16 +183,18 @@ class ServerActor extends Actor {
     ServerActor.statusMap += (statusId -> statusObj)
 
     //Now add the status to the message queue
-    //TODO: Add a if condition. If the avatarId is not already present in the
-    //avatarMap, go and fetch from the DB
+
     val avatarObj = ServerActor.avatarMap(avatarId)
     avatarObj.addStatusToQueue(statusId)
 
     //Get my followers
     val myFollowers = avatarObj.getFollowers
-
     //Add the status to all the followers queue
     for (followerAvatarId <- myFollowers) {
+      if (!ServerActor.avatarMap.contains(followerAvatarId)) {
+        Login(followerAvatarId)
+      }
+
       val followerObj = ServerActor.avatarMap(followerAvatarId)
       followerObj.addStatusToQueue(statusId)
     }
@@ -205,10 +218,21 @@ class ServerActor extends Actor {
   def getAllMyStatuses(avatarId : Int) : ListBuffer[Status] = {
 
     //TODO: Fetch avatarObj and do. This is only for test purpose
-    ServerActor.db.connect
-    val res = ServerActor.db.dbGetStatus(avatarId)
-    return res
-
+    //ServerActor.db.connect
+    var avatarObj = ServerActor.avatarMap(avatarId)
+    val statusIds = avatarObj.getMessages
+    var statusList : ListBuffer[Status] = ListBuffer.empty[Status]
+    for (statusId <- statusIds) {
+      if (ServerActor.statusMap.contains(statusId)) {
+        statusList += ServerActor.statusMap(statusId)
+      }
+      else {
+        val tempDb = ServerActor.db
+        tempDb.connect
+        statusList += tempDb.getOneStatus(statusId)
+      }
+    }
+    return statusList
   }
 
   def Login(avatarId : Int) = {
@@ -222,8 +246,10 @@ class ServerActor extends Actor {
     val statusQueue : LinkedBlockingQueue[Int] = tempDb.dbNewsFeed(avatarId)
     val avatarObj = new Avatars(avatarId, followers, statusQueue, 0)
 
-    if (ServerActor.avatarMap.contains(avatarId))
+    if (!ServerActor.avatarMap.contains(avatarId)) {
       ServerActor.avatarMap += (avatarId -> avatarObj)
+    }
+
   }
 
   def Logout(avatarId : Int) = {
