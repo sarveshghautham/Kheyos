@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 //
 //  //dbObj.selectQuery
 //}
-import java.sql.{Connection, DriverManager, ResultSet}
+import java.sql._
 
 class DbCon {
 
@@ -137,6 +137,36 @@ class DbCon {
     }
 
     return statusQueue
+  }
+
+  def addStatus(status : Status): Unit = {
+
+    var query = "INSERT INTO Status " +
+                    "(status_id, avatar_id, picture_id, text, active, time) " +
+                    "VALUES (?,?,?,?,?,?)";
+    var ps : PreparedStatement = null;
+
+    try {
+      ps = conn.prepareStatement(query)
+      ps.setInt(1, status.getStatusId)
+      ps.setInt(2, status.getAvatarId)
+      ps.setInt(3, status.getPictureId)
+      ps.setString(4, status.getStatusText)
+      if (status.getActive) {
+        ps.setInt(5, 1)
+      }
+      else {
+        ps.setInt(5, 0)
+      }
+      ps.setTimestamp(6, status.getTimestamp)
+
+      ps.executeUpdate()
+    }
+    finally {
+      ps.close();
+      conn.close()
+    }
+
   }
 
 }

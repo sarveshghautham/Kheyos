@@ -199,6 +199,11 @@ class ServerActor extends Actor {
       followerObj.addStatusToQueue(statusId)
     }
 
+    var tempDb = ServerActor.db
+    tempDb.connect
+
+    tempDb.addStatus(statusObj)
+
   }
 
   //My news feed

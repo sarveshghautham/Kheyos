@@ -22,6 +22,19 @@ class Status(status_id : Int, avatar_id : Int, picture_id : Int, active_post : B
   }
 
   def getAvatarId : Int = {
-    return avatar_id
+    return avatarId
   }
+
+  def getPictureId : Int = {
+    return pictureId
+  }
+
+  def getTimestamp : Timestamp = {
+    return timestamp
+  }
+
+  def getActive : Boolean = {
+    return active
+  }
+
 }
