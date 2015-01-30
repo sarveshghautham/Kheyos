@@ -85,7 +85,7 @@ for ($i = 0; $i < count($activities); $i++) {
                             ?>
                         </div>
                         <?php
-                        echo $avatar_info['name'];
+                        echo htmlspecialchars($avatar_info['name']);
                         ?>
                     </a>
                     <br/>
@@ -117,7 +117,7 @@ for ($i = 0; $i < count($activities); $i++) {
                                 <div class="carousel-caption">
                                     <p class="text-center" style="color: <?php echo $status_info['font_color']; ?>;">
                                         <!-- Font Colour from form -->
-                                        <?php echo $status_info['text']; ?>
+                                        <?php echo htmlspecialchars($status_info['text']); ?>
                                     </p>
                                 </div>
                             </div>
@@ -206,7 +206,7 @@ for ($i = 0; $i < count($activities); $i++) {
                             ?>
                         </div>
 
-                        <?php echo $his_avatar_info['name'] ?>
+                        <?php echo htmlspecialchars($his_avatar_info['name']) ?>
                     </a>
                     <br/>
                     <a class="add_link_gray add_font_size_12"><?php echo $time[0] . ":" . $time[1] . " - " . $date[2] . " " . $statusMonth . " " . $date[0]; ?></a>
@@ -260,7 +260,7 @@ for ($i = 0; $i < count($activities); $i++) {
                                 ?>
                             </div>
 
-                            <?php echo $my_avatar_info['name']; ?>
+                            <?php echo htmlspecialchars($my_avatar_info['name']); ?>
                         </a>
             </div>
         </div> <!-- row post-display-block -->

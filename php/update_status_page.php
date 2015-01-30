@@ -130,7 +130,7 @@ require_once 'navbar.php';
                                     }
                                     ?>
                                 </div>
-                                <?php echo $avatar_info['name']; ?>
+                                <?php echo htmlspecialchars($avatar_info['name']); ?>
                             </label>
                         </div>
                     <?php

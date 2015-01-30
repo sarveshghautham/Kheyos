@@ -33,7 +33,7 @@ if (!isset ($_SESSION['user_id'])) {
                 <img alt="<?php echo "@" . $avatar_info['handle']; ?>"
                      src="/get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
             </div>
-            <?php echo $avatar_info['name']; ?>
+            <?php echo htmlspecialchars($avatar_info['name']); ?>
         </a>
     <?php
     }

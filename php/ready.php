@@ -70,7 +70,7 @@ $avatar_info = $objAvatars->GetAvatarInfo($avatar_id);
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <h4><?php echo $avatar_info['name']; ?></h4>
+                                <h4><?php echo htmlspecialchars($avatar_info['name']); ?></h4>
                                 <h5><?php echo "@" . $avatar_info['handle']; ?></h5>
                             </div>
                         </div>
@@ -80,7 +80,7 @@ $avatar_info = $objAvatars->GetAvatarInfo($avatar_id);
                             <div class="col-md-12">
                                 <p>
                                 	<span class='add_word_wrap_break_word'>
-                                    		<?php echo $avatar_info['bio']; ?>
+                                    		<?php echo htmlspecialchars($avatar_info['bio']); ?>
                                     	</span>
                                 </p>
                             </div>

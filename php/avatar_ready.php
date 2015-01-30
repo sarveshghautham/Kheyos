@@ -89,7 +89,7 @@ require_once 'navbar.php';
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <h4><?php echo $avatar_info['name']; ?></h4>
+                        <h4><?php echo htmlspecialchars($avatar_info['name']); ?></h4>
                         <h5><?php echo "@" . $avatar_info['handle']; ?></h5>
                     </div>
                     <br/>
@@ -97,7 +97,7 @@ require_once 'navbar.php';
                     <div class="col-md-12">
                         <p>
                         	<span class="add_word_wrap_break_word ">
-                            <?php echo $avatar_info['bio']; ?>
+                            <?php echo htmlspecialchars($avatar_info['bio']); ?>
                             	</span>
                         </p>
                     </div>
@@ -161,7 +161,7 @@ require_once 'navbar.php';
                         <div class="imgLiquidFill imgLiquid default_profile_20 add_display_inline_block">
                             <img src="get_profile_pic.php?picture_id=<?php echo $picture_id; ?>"/>
                         </div>
-                        <?php echo $avatar_info['name']; ?>
+                        <?php echo htmlspecialchars($avatar_info['name']); ?>
                     </a>
                 <?php
                 }

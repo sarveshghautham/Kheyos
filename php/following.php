@@ -95,13 +95,13 @@ require_once 'navbar.php';
                                 ?>
                             </div>
                                 <span class="add_font_size_18">
-                                <?php echo $follower_info['name']; ?>
+                                <?php echo htmlspecialchars($follower_info['name']); ?>
                                 </span>
                         </a>
 
                         <p>
                         	<span class="add_word_wrap_break_word fillers_max_768">
-                            <?php echo $follower_info['bio']; ?>
+                            <?php echo htmlspecialchars($follower_info['bio']); ?>
                             	</span>
                         </p>
 

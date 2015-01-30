@@ -110,7 +110,7 @@ if (isset($_POST['btnUpload'])) {
 
                                     <?php
                                     }
-                                    echo $avatar_info['name'];
+                                    echo htmlspecialchars($avatar_info['name']);
                                     ?>
                                 </label>
                             </div>
